@@ -28,6 +28,21 @@
         background-color: #f1f1f1;
         cursor: pointer;
     }
+
+    .close {
+        color: #aaa;
+        float: right; /* Çarpı işaretini sağa hizalar */
+        font-size: 28px;
+        font-weight: bold;
+        margin: -10px -10px 0 0; /* Çarpı işaretini modal formun dışına çıkarır */
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
+    }
 </style>
 <div id="ratingModal" class="modal">
     <div class="modal-content">

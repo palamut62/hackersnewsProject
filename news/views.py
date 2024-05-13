@@ -4,7 +4,8 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from functions import time_ago
-from news.models import News
+from news.models import News, Comment
+
 
 def index(request):
     news = News.objects.all()
@@ -44,6 +45,14 @@ def edit_news(request, news_id):
 from django.http import JsonResponse
 from .forms import CommentForm, RatingForm
 
+# news/views.py
+
+from django.http import JsonResponse
+from django.core import serializers
+
+from django.http import JsonResponse
+from django.core import serializers
+
 def comment_view(request, comment_id):
     if request.method == 'POST':
         form = CommentForm(request.POST)
@@ -52,9 +61,18 @@ def comment_view(request, comment_id):
             comment.user = request.user
             comment.news_id = comment_id
             comment.save()
-            return JsonResponse({'status': 'success'})
+            news = News.objects.get(id=comment_id)
+            comments = Comment.objects.filter(news=news).order_by('-created_at')  # Yorumları tarihe göre sıralayabilirsiniz
+            comments_data = serializers.serialize('json', comments)
+            return JsonResponse({'status': 'success', 'comments': comments_data})
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
+    elif request.method == 'GET':
+        news = News.objects.get(id=comment_id)
+        comments = Comment.objects.filter(news=news).order_by('-created_at')
+        comments_data = serializers.serialize('json', comments)
+        return JsonResponse({'status': 'success', 'comments': comments_data})
+
 
 def rating_view(request, rating_id):
     if request.method == 'POST':

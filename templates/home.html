@@ -64,7 +64,7 @@
                             </a>
                             <span class="pagetop">
                             <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
-                            <a href="newest">new</a> | <a href="front">past</a>
+                         
                         </span>
                         </div>
                         <div class="search-login">
@@ -186,6 +186,7 @@
 
         commentIcons.forEach(icon => {
             icon.addEventListener('click', (e) => {
+                e.preventDefault();
                 const commentId = icon.getAttribute('data-comment-id');
                 fetch(`/comment/${commentId}/`, {
                     method: 'POST',
@@ -194,7 +195,17 @@
                     }
                 }).then(response => response.json())
                     .then(data => {
-                        window.location.href = `/news/${commentId}/`;
+                        // Modal formu görünür yapar
+                        document.getElementById('commentModal').style.display = 'block';
+
+                        // Yorumları alır ve listeler
+                        const commentList = document.querySelector('#commentModal ul');
+                        commentList.innerHTML = ''; // Önceki yorumları temizler
+                        data.comments.forEach(comment => {
+                            const li = document.createElement('li');
+                            li.textContent = comment.fields.comment; // 'fields' ve 'comment' JSON verisindeki yorum metnini temsil eder
+                            commentList.appendChild(li);
+                        });
                     });
             });
         });
@@ -256,7 +267,29 @@
             event.preventDefault();
             commentModal.style.display = 'block'; // Modal formu görünür yapar
         });
-      
+
+        document.querySelectorAll('.comment-icon').forEach(icon => {
+    icon.addEventListener('click', e => {
+        e.preventDefault();
+        const commentId = icon.getAttribute('data-comment-id');
+        fetch(`/comment/${commentId}/`, { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const comments = data.comments;  // JSON.parse kaldırıldı
+                    const commentList = document.querySelector('#commentModal ul');
+                    commentList.innerHTML = '';  // Mevcut yorumları temizle
+                    comments.forEach(comment => {
+                        const li = document.createElement('li');
+                        li.textContent = comment.fields.comment;  // Yorum metnini ekler
+                        commentList.appendChild(li);
+                    });
+                    document.getElementById('commentModal').style.display = 'block';  // Modal formu göster
+                }
+            });
+    });
+});
+
 
 
     </script>
