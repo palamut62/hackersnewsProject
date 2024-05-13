@@ -2,10 +2,52 @@
 {% load static %}
 {% block style %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         .edit-icon {
             font-size: 12px;
             color: #9a9595;
+        }
+
+        .fas.fa-star, .fas.fa-comment {
+            color: #9a9595; /* Iconların rengini kırmızı yapar */
+            font-size: 12px; /* Iconların boyutunu 20px yapar */
+        }
+
+        .modal {
+            display: none; /* Modal formu varsayılan olarak gizler */
+            position: fixed; /* Modal formu ekranın üzerinde tutar */
+            z-index: 1; /* Modal formu diğer elementlerin üzerinde tutar */
+            left: 0;
+            top: 0;
+            width: 100%; /* Modal formun genişliğini ekran genişliğine ayarlar */
+            height: 100%; /* Modal formun yüksekliğini ekran yüksekliğine ayarlar */
+            overflow: auto; /* İçerik çok uzun olduğunda kaydırmayı etkinleştirir */
+            background-color: rgb(0, 0, 0); /* Modal formun arka plan rengini ayarlar */
+            background-color: rgba(0, 0, 0, 0.4); /* Modal formun arka plan rengini ayarlar */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* Modal formu yatay olarak ortalar */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Modal formun genişliğini ayarlar */
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Modal formun etrafına gölge ekler */
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+        }
+
+        /* Modal formun açılma animasyonunu ekler */
+        @keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+            to {
+                top: 0;
+                opacity: 1
+            }
         }
     </style>
 {% endblock %}
@@ -69,11 +111,19 @@
                                 <td colspan="2"></td>
                                 <td class="subtext-cell">
                                     {% for rating in new.ratings.all %}
-                                        <span class="score" id="score_40280490">{{ rating.rating }} points</span>
+                                        <a href="#" class="rating-icon" data-rating-id="{{ rating.id }}">
+                                            <i class="fas fa-star"></i>
+                                        </a>
+                                        <span class="score" id="score_40280490">{{ rating.rating }}</span>
                                     {% endfor %}
                                     by <a href="user?id=fagnerbrack" class="hnuser">{{ user }}</a>
                                     <span class="age"><a href="item?id=40280490">{{ new.time_ago }}</a></span> |
-                                    <a href="item?id=40280490">{{ new.comments.count }}&nbsp;comments</a>
+                                    <a href="#" class="comment-icon" data-comment-id="{{ new.id }}">
+                                        <i class="fas fa-comment"></i>
+                                    </a>
+                                    <a href="item?id=40280490">{{ new.comments.count }}</a>
+                                    <!-- Diğer HTML kodları -->
+
 
                                     {% if request.user.is_superuser %}
                                         <a href="{% url 'edit_news' new.id %}"><i
@@ -112,5 +162,106 @@
         <p class="design-credit">Design by Umut Celik | 2024</p>
     </footer>
     <!-- Diğer HTML kodları -->
+
     <script src="hn.js"></script>
+
+    <script>
+        const ratingIcons = document.querySelectorAll('.rating-icon');
+        const commentIcons = document.querySelectorAll('.comment-icon');
+
+        ratingIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                const ratingId = icon.getAttribute('data-rating-id');
+                fetch(`/rate/${ratingId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        document.querySelector(`#score_${ratingId}`).textContent = data.rating;
+                    });
+            });
+        });
+
+        commentIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                const commentId = icon.getAttribute('data-comment-id');
+                fetch(`/comment/${commentId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        window.location.href = `/news/${commentId}/`;
+                    });
+            });
+        });
+
+        // JavaScript kodu
+        document.addEventListener('DOMContentLoaded', function () {
+            var commentModal = document.getElementById('commentModal');
+            var ratingModal = document.getElementById('ratingModal');
+            var commentForm = document.getElementById('commentForm');
+            var ratingForm = document.getElementById('ratingForm');
+            var commentIcons = document.querySelectorAll('.comment-icon');
+            var ratingIcons = document.querySelectorAll('.rating-icon');
+
+            commentIcons.forEach(function (icon) {
+                icon.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    commentModal.style.display = 'block';
+                });
+            });
+
+            ratingIcons.forEach(function (icon) {
+                icon.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    ratingModal.style.display = 'block';
+                });
+            });
+
+            commentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData(commentForm);
+                fetch('/comment/', {
+                    method: 'POST',
+                    body: formData
+                }).then(function (response) {
+                    if (response.ok) {
+                        commentModal.style.display = 'none';
+                    } else {
+                        alert('Yorum yapılırken bir hata oluştu.');
+                    }
+                });
+            });
+
+            ratingForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                var formData = new FormData(ratingForm);
+                fetch('/rate/', {
+                    method: 'POST',
+                    body: formData
+                }).then(function (response) {
+                    if (response.ok) {
+                        ratingModal.style.display = 'none';
+                    } else {
+                        alert('Puanlama yapılırken bir hata oluştu.');
+                    }
+                });
+            });
+        });
+        icon.addEventListener('click', function (event) {
+            event.preventDefault();
+            commentModal.style.display = 'block'; // Modal formu görünür yapar
+        });
+      
+
+
+    </script>
+    {% include 'comments.html' %}
+    {% include 'points.html' %}
 {% endblock %}
+   
+

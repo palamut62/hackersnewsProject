@@ -1,0 +1,51 @@
+<style>
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: 'Inconsolata', monospace;
+        background-color: #eddf9a;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        width: 200px; /* Modal formun genişliğini ayarlar */
+    }
+
+    .modal-content textarea, .modal-content input {
+        margin: 5px 0;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%; /* Elementin genişliğini ayarlar */
+    }
+
+    .modal-content button {
+        margin: 5px 0;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        width: 100%; /* Elementin genişliğini ayarlar */
+        background-color: #f1f1f1;
+        cursor: pointer;
+    }
+</style>
+<div id="ratingModal" class="modal">
+    <div class="modal-content">
+        <a href=""><span class="close">&times;</span></a>
+        <form id="ratingForm" method="POST">
+            {% csrf_token %}
+            <input type="number" name="rating" min="1" max="5" placeholder="Puanınızı buraya girin...">
+            <button type="submit">Puan Ver</button>
+        </form>
+    </div>
+</div>
+<script>
+    var closeButtons = document.querySelectorAll('.close');
+
+    closeButtons.forEach(function (button) {
+        button.addEventListener('click', function (event) {
+            console.log('Çarpı işaretine tıklandı'); // Bu, çarpı işaretine tıklandığında yazdırılmalı
+            event.target.parentElement.parentElement.style.display = 'none';
+        });
+    });
+</script>
