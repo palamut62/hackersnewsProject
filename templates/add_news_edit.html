@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+
+    <style>
+        /* Buraya signup.html sayfasındaki stil kodlarını ekleyin */
+        .flex-container-2 {
+            font-family: 'Inconsolata', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Dikey eksende merkeze alır */
+            color: #9a9595;
+            font-size: 10pt;
+            height: 100vh; /* Viewport'un yüksekliğini alır */
+
+        }
+
+        a {
+            color: #173757; /* Bu kod tüm linklerin rengini kırmızı yapar */
+            text-decoration: none; /* Bu kod tüm linklerin altını çizgisini kaldırır */
+            font-size: 10.5pt;
+        }
+
+        .flex-container-1 {
+            font-family: 'Inconsolata', monospace;
+            display: flex;
+            justify-content: center;
+            color: #9a9595;
+            font-size: 10pt;
+        }
+
+        .main-table {
+            width: 80%;
+        }
+
+        .header-cell, .footer-cell {
+            background-color: #eddf9a;
+
+        }
+
+        .logo-cell img {
+            border: None;
+        }
+
+        .link-cell .pagetop a {
+            text-decoration: none;
+            color: black;
+            margin-right: 10px;
+        }
+
+        .login-cell .pagetop a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .spacer-cell {
+            height: 10px;
+        }
+
+
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inconsolata', monospace;
+            background-color: #eddf9a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column; /* Form elemanlarını dikey sıralar */
+        }
+
+        .login-form input {
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+        }
+
+        .form-button {
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+      <div class="flex-container flex-container-1" style="margin-top: 30px">
+
+
+        <table id="hnmain" class="main-table">
+
+            <tr>
+                <td class="header-cell">
+                    <div class="header-container"
+                         style="display: flex; justify-content: space-between; align-items: center;padding: 5px">
+                        <div class="logo-links">
+                            <a href="{% url 'index' %}">
+                                <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
+                            </a>
+                            <span class="pagetop">
+                            <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
+                          
+                        </span>
+                        </div>
+                        <div class="search-login">
+                            <a href="{% url 'index' %}">Home</a>
+                            {% if user.is_authenticated %}
+                                <p style="display: inline;">{{ user.username }}</p>
+                                <a href="{% url 'logout' %}">logout</a>
+                                <a href="{% url 'profile' %}">profile</a>
+                                {% if user.is_superuser %}
+                                    <a href="{% url 'add_news' %}">Add News</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}">login</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="spacer-cell"></td>
+            </tr>
+
+        </table>
+    </div>
+
+    <div class="flex-container flex-container-2">
+        <div class="login-card">
+            <h2>Edit News</h2>
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                {% endfor %}
+                <button type="submit" class="form-button">Update</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

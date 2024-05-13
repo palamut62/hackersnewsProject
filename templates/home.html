@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .edit-icon {
+            font-size: 12px;
+            color: #9a9595;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="flex-container" style="margin-top: 30px">
+        <table id="hnmain" class="main-table">
+            <tr>
+                <td class="header-cell">
+                    <div class="header-container"
+                         style="display: flex; justify-content: space-between; align-items: center;padding: 5px">
+                        <div class="logo-links">
+                            <a href="{% url 'index' %}">
+                                <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
+                            </a>
+                            <span class="pagetop">
+                            <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
+                            <a href="newest">new</a> | <a href="front">past</a>
+                        </span>
+                        </div>
+                        <div class="search-login">
+                            <form method="get" action="search" style="display: inline;">
+                                <input type="text" name="q" value="" size="17" autocorrect="off" spellcheck="false"
+                                       autocapitalize="off" autocomplete="off">
+                                <input type="submit" value="search">
+                            </form>
+                            {% if user.is_authenticated %}
+                                <p style="display: inline;">{{ user.username }}</p>
+                                <a href="{% url 'logout' %}">logout</a>
+                                <a href="{% url 'profile' %}">profile</a>
+                                {% if user.is_superuser %}
+                                    <a href="{% url 'add_news' %}">Add News</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}">login</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="spacer-cell"></td>
+            </tr>
+            {% for new in news %}
+                <tr class="news-row">
+                    <td>
+                        <table class="news-item">
+                            <tr class="athing" id="40280490">
+                                <td class="rank-cell">{{ forloop.counter }}.</td>
+                                <td class="vote-cell">
+                                    <center><a id="up_40280490" href="vote?id=40280490&how=up&goto=news">
+                                        <div class="votearrow" title="upvote"></div>
+                                    </a></center>
+                                </td>
+                                <td class="title-cell">
+                                    <a href="{{ new.link }}">{{ new.short_description }}</a>
+                                    <span class="sitebit comhead">(<a
+                                            href="{{ new.link }}">{{ new.category }}</a>)</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"></td>
+                                <td class="subtext-cell">
+                                    {% for rating in new.ratings.all %}
+                                        <span class="score" id="score_40280490">{{ rating.rating }} points</span>
+                                    {% endfor %}
+                                    by <a href="user?id=fagnerbrack" class="hnuser">{{ user }}</a>
+                                    <span class="age"><a href="item?id=40280490">{{ new.time_ago }}</a></span> |
+                                    <a href="item?id=40280490">{{ new.comments.count }}&nbsp;comments</a>
+
+                                    {% if request.user.is_superuser %}
+                                        <a href="{% url 'edit_news' new.id %}"><i
+                                                class="fas fa-pencil-alt edit-icon"></i></a>                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td class="footer-cell">
+                    <center>
+                    <span class="yclinks">
+                        <a href="newsguidelines.html">Guidelines</a> | <a href="newsfaq.html">FAQ</a> |
+                        <a href="lists">Lists</a> | <a href="https://github.com/HackerNews/API">API</a> |
+                        <a href="security.html">Security</a> | <a href="https://www.ycombinator.com/legal/">Legal</a> |
+                        <a href="https://www.ycombinator.com/apply/">Apply to YC</a> | <a
+                            href="mailto:hn@ycombinator.com">Contact</a>
+                    </span>
+                        <br><br>
+                    </center>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <!-- Diğer HTML kodları -->
+    <footer class="footer-container">
+        <div class="social-media-links">
+            <a href="https://www.github.com/palamut62" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.twitter.com/palamut62" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.instagram.com/umutins6230" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.linkedin.com/in/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <a href="http://umutins62.pythonanywhere.com/" target="_blank"><i class="fas fa-globe"></i></a>
+        </div>
+        <p class="design-credit">Design by Umut Celik | 2024</p>
+    </footer>
+    <!-- Diğer HTML kodları -->
+    <script src="hn.js"></script>
+{% endblock %}

@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <style>
+       
+        
+           .flex-container {
+            font-family: 'Inconsolata', monospace;
+            display: flex;
+            justify-content: center;
+            color: #9a9595;
+            font-size: 10pt;
+
+
+        }
+
+        a {
+            color: #173757; /* Bu kod tüm linklerin rengini kırmızı yapar */
+            text-decoration: none; /* Bu kod tüm linklerin altını çizgisini kaldırır */
+            font-size: 10.5pt;
+        }
+
+        .main-table {
+            width: 80%;
+           
+
+        }
+
+
+       
+
+        .logo-cell img {
+            border: None;
+        }
+
+        .link-cell .pagetop a {
+            text-decoration: none;
+            color: black;
+            margin-right: 10px;
+        }
+
+        .login-cell .pagetop a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .spacer-cell {
+            height: 10px;
+        }
+
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inconsolata', monospace;
+            background-color: #eddf9a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column; /* Form elemanlarını dikey sıralar */
+        }
+
+        .form-input {
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+
+        }
+
+        .form-button {
+            margin: 5px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 200px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .login-form a {
+            color: #636366; /* Link rengini mavi yapar */
+            font-size: 14px; /* Font boyutunu 16px yapar */
+            text-decoration: none; /* Link altını çizgisini kaldırır */
+        }
+
+        .login-form h3 {
+            font-size: 24px; /* Font boyutunu 24px yapar */
+            color: #636366; /* Başlık rengini mavi yapar */
+        }
+
+        .login-form label {
+            font-size: 14px; /* Font boyutunu 16px yapar */
+            color: #636366; /* Link rengini mavi yapar */
+        }
+        .login-form p {
+            color: red;
+            font-size: 14px;
+        }
+        .login-icon {
+            font-size: 40px; /* Simge boyutu */
+            background-color: #ffffff; /* Simge arka plan rengi */
+            border-radius: 50%; /* Dairesel arka plan */
+            padding: 10px; /* Simge etrafındaki boşluk */
+            
+        }
+        .home-button {
+            position: fixed; /* Butonu sabitler */
+            top: 10px; /* Üstten 10px boşluk bırakır */
+            right: 10px; /* Sağdan 10px boşluk bırakır */
+            padding: 10px; /* Buton etrafındaki boşluk */
+            background-color: #f1f1f1; /* Buton arka plan rengi */
+            border: none; /* Buton çerçevesini kaldırır */
+            border-radius: 5px; /* Buton köşelerini yuvarlar */
+            cursor: pointer; /* İmleci el simgesi yapar */
+        }
+
+    </style>
+{% endblock %}
+
+
+{% block content %}
+   <div class="flex-container" style="margin-top: 30px">
+        <table id="hnmain" class="main-table">
+
+            <tr>
+                <td class="header-cell">
+                    <div class="header-container"
+                         style="display: flex; justify-content: space-between; align-items: center;padding: 5px">
+                        <div class="logo-links">
+                            <a href="{% url 'index' %}">
+                                <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
+                            </a>
+                            <span class="pagetop">
+                            <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
+                                <a href="{% url 'index' %}">Home</a>
+                          
+                        </span>
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="spacer-cell"></td>
+            </tr>
+
+        </table>
+    </div>
+    <body>
+    <div class="flex-container" style="margin-top: 20px">
+        <div class="login-card">
+            <i class="fas fa-user login-icon"></i>  <!-- Kişi simgesi -->
+            <form method="POST" class="login-form">
+                {% csrf_token %}
+                <h3>Login</h3>
+                <!-- Hata mesajlarını göster -->
+                {% if messages %}
+                {% endif %}
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                <!-- Form elemanları -->
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-input">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-input">
+                <button type="submit" class="form-button">Login</button>
+                <a href="{% url 'signup' %}">Don't have an account? Sign up here!</a>
+            </form>
+        </div>
+    </div>
+    </body>
+{% endblock %}
+
+

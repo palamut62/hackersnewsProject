@@ -1,0 +1,121 @@
+.flex-container {
+    font-family: 'Inconsolata', monospace;
+    display: flex;
+    justify-content: center;
+    color: #9a9595;
+    font-size: 10pt;
+
+}
+
+a {
+    color: #173757; /* Bu kod tüm linklerin rengini kırmızı yapar */
+    text-decoration: none; /* Bu kod tüm linklerin altını çizgisini kaldırır */
+    font-size: 10.5pt;
+}
+
+.main-table {
+    width: 80%;
+    background-color: antiquewhite;
+
+}
+
+.header-cell, .footer-cell {
+    background-color: #eddf9a;
+
+}
+
+.header-table, .news-item {
+    width: 100%;
+}
+
+.logo-cell img {
+    border: None;
+}
+
+.link-cell .pagetop a {
+    text-decoration: none;
+    color: black;
+    margin-right: 10px;
+}
+
+.login-cell .pagetop a {
+    text-decoration: none;
+    color: black;
+}
+
+.spacer-cell {
+    height: 10px;
+}
+
+.rank-cell, .vote-cell, .title-cell {
+    vertical-align: top;
+}
+
+.subtext-cell {
+    color: #828282;
+    font-size: 10pt;
+}
+
+.votearrow {
+    width: 10px;
+    height: 10px;
+    border: none;
+
+}
+
+.footer-container {
+
+    padding: 20px; /* Footer içindeki boşluk */
+    text-align: center; /* Metnin hizalanması */
+}
+
+.social-media-links a {
+    margin: 0 10px; /* Linkler arasındaki boşluk */
+    color: #333; /* Linklerin rengi */
+    text-decoration: none; /* Alt çizginin kaldırılması */
+}
+
+.social-media-links a:hover {
+    color: #007bff; /* Fare ile üzerine gelindiğinde linklerin rengi */
+}
+
+.social-media-links a {
+    margin: 0 10px; /* Linkler arasındaki boşluk */
+    color: #333; /* Linklerin rengi */
+}
+
+.social-media-links a:hover {
+    color: #007bff; /* Fare ile üzerine gelindiğinde linklerin rengi */
+}
+
+.social-media-links i {
+    font-size: 1.5em; /* İkonların boyutu */
+}
+
+.design-credit {
+    font-family: 'Inconsolata', monospace; /* Yazı tipi */
+    margin-top: 20px; /* Açıklamanın üstündeki boşluk */
+    color: #333; /* Açıklamanın rengi */
+    font-size: 0.8em; /* Açıklamanın font boyutu */
+}
+
+.search-cell {
+    padding: 10px; /* Arama kutusunun içindeki boşluk */
+    border-radius: 5px; /* Arama kutusunun kenar yuvarlaklığı */
+}
+
+.search-cell input[type="input"] {
+    width: 100%; /* Arama kutusunun genişliği */
+    padding: 10px; /* Arama kutusunun içindeki boşluk */
+    border: 1px solid #ccc; /* Arama kutusunun kenar çizgisi */
+    border-radius: 5px; /* Arama kutusunun kenar yuvarlaklığı */
+}
+
+.yatay-container {
+    display: flex;
+    align-items: center;
+}
+
+
+
+
