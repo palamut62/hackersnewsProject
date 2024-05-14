@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close Modal Event
     document.querySelector('.close').onclick = function () {
-        document.getElementById('commentModal').style.display = 'none';
+        document.getElementById('ratingModal').style.display = 'none';
     };
 
     // Comment Icons Click Event
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             li.textContent = comment.fields.comment;
                             commentList.appendChild(li);
                         });
-                        document.querySelector('#commentForm').setAttribute('data-comment-id', newsId);
+                        document.querySelector('#commentForm').setAttribute('data-news-id', newsId);
                         document.getElementById('commentModal').style.display = 'block';
                     }
                 });

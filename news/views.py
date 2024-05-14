@@ -59,13 +59,15 @@ def comment_view(request, comment_id):
         comments_data = serializers.serialize('json', comments)
         return JsonResponse({'status': 'success', 'comments': comments_data})
 
+
 def rating_view(request, rating_id):
     news = get_object_or_404(News, id=rating_id)
     if request.method == 'POST':
         form = RatingForm(request.POST)
         if form.is_valid():
             rating, created = Rating.objects.update_or_create(
-                user=request.user, news=news,
+                user=request.user,
+                news=news,
                 defaults={'rating': form.cleaned_data['rating']}
             )
             average_rating = news.ratings.aggregate(Avg('rating'))['rating__avg']
@@ -73,6 +75,7 @@ def rating_view(request, rating_id):
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
 
 
 def search_news(request):
@@ -98,10 +101,6 @@ def search_news(request):
         })
 
     return JsonResponse({'results': results_data})
-
-
-
-
 
 
 
