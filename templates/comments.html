@@ -28,38 +28,36 @@
         background-color: #f1f1f1;
         cursor: pointer;
     }
+
     .close {
-    color: #aaa;
-    float: right; /* Çarpı işaretini sağa hizalar */
-    font-size: 28px;
-    font-weight: bold;
-    margin: -10px -10px 0 0; /* Çarpı işaretini modal formun dışına çıkarır */
-}
+        color: #aaa;
+        float: right; /* Çarpı işaretini sağa hizalar */
+        font-size: 28px;
+        font-weight: bold;
+        margin: -10px -10px 0 0; /* Çarpı işaretini modal formun dışına çıkarır */
+    }
 
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
-}
-    
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
+    }
+
 </style>
-
-
 <div id="commentModal" class="modal">
     <div class="modal-content">
-        <a href=""><span class="close">&times;</span></a>
-        <form id="commentForm" method="POST">
+        <span class="close" onclick="document.getElementById('commentModal').style.display='none'">&times;</span>
+        <h2>Comments</h2>
+        <ul id="comment_list"></ul>
+        <form id="commentForm" data-comment-id="">
             {% csrf_token %}
-            <textarea name="comment" placeholder="Yorumunuzu buraya yazın..."></textarea>
-            <button type="submit">Yorum Yap</button>
+            <textarea name="comment" placeholder="Add a comment..."></textarea>
+            <button type="submit">Submit</button>
         </form>
-        <!-- Dinamik olarak yorumları listeler -->
-        <ul>
-            <!-- Yorumlar JavaScript ile doldurulacak -->
-        </ul>
     </div>
 </div>
+
 
 <script>
     var closeButtons = document.querySelectorAll('.close');
@@ -70,4 +68,6 @@
             event.target.parentElement.parentElement.style.display = 'none';
         });
     });
+
+
 </script>

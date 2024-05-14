@@ -1,9 +1,5 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
-
-# create tech-ai news category list
+from django.contrib.auth.models import User
 
 CATEGORY = ['Ai', 'Tech', 'Python', 'Java', 'C++', 'C#', 'Ruby', 'JavaScript', 'React', 'Angular', 'Vue', 'Django',
             'Flask', 'Express', 'Spring', 'Laravel', 'Node', 'RubyOnRails', 'ASP.NET', 'JQuery', 'Bootstrap',
@@ -12,8 +8,7 @@ CATEGORY = ['Ai', 'Tech', 'Python', 'Java', 'C++', 'C#', 'Ruby', 'JavaScript', '
             'Ai', 'MachineLearning', 'DeepLearning', 'DataScience', 'BigData', 'DataAnalysis', 'DataEngineering',
             'DataMining', 'DataVisualization', 'BusinessIntelligence', 'ArtificialIntelligence', 'NaturalLanguageProcessing',
             'NaturalLanguageUnderstanding', 'SpeechRecognition', 'SpeechSynthesis', 'ReinforcementLearning',
-            'Robotics', 'ComputerVision','CryptoCurrency', 'Blockchain', 'Bitcoin', 'Ethereum', 'Ripple', 'Litecoin',]
-
+            'Robotics', 'ComputerVision', 'CryptoCurrency', 'Blockchain', 'Bitcoin', 'Ethereum', 'Ripple', 'Litecoin',]
 
 class News(models.Model):
     title = models.CharField(max_length=200)
@@ -24,9 +19,6 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
-
-
-from django.contrib.auth.models import User
 
 class Rating(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='ratings')
@@ -40,6 +32,7 @@ class Comment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
         return f'{self.user.username} comment'

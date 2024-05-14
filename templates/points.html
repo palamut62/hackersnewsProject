@@ -46,14 +46,22 @@
 </style>
 <div id="ratingModal" class="modal">
     <div class="modal-content">
-        <a href=""><span class="close">&times;</span></a>
-        <form id="ratingForm" method="POST">
+        <span class="close" onclick="document.getElementById('ratingModal').style.display='none'">&times;</span>
+        <h2>Rate</h2>
+        <form id="ratingForm" data-rating-id="">
             {% csrf_token %}
-            <input type="number" name="rating" min="1" max="5" placeholder="Puanınızı buraya girin...">
-            <button type="submit">Puan Ver</button>
+            <label for="rating">Rating:</label>
+            <input type="number" name="rating" min="1" max="5" step="1">
+            <button type="submit">Submit</button>
         </form>
     </div>
 </div>
+
+
+
+
+
+
 <script>
     var closeButtons = document.querySelectorAll('.close');
 
