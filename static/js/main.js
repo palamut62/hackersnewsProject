@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let ratingValue = 0;
 
     // Yıldız tıklama olaylarını işleme
-    stars.forEach(star => {
+    stars.forEach((star, index) => {
         star.addEventListener('click', () => {
             ratingValue = star.getAttribute('data-value');
             document.getElementById('ratingValue').value = ratingValue;
             stars.forEach(s => s.classList.remove('selected'));
-            for (let i = 0; i < ratingValue; i++) {
+            for (let i = 0; i <= index; i++) {
                 stars[i].classList.add('selected');
             }
         });
