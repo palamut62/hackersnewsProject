@@ -275,24 +275,84 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            const commentModal = document.getElementById('commentModal');
+      
             const ratingModal = document.getElementById('ratingModal');
-            const commentForm = document.getElementById('commentForm');
+   
             const ratingForm = document.getElementById('ratingForm');
-            const commentIcons = document.querySelectorAll('.comment-icon');
+    
             const ratingIcons = document.querySelectorAll('.rating-icon');
             const likeIcons = document.querySelectorAll('.like-icon');
 
-            commentIcons.forEach(function (icon) {
-                icon.addEventListener('click', function (event) {
-                    event.preventDefault();
+            const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+            const loginUrl = "{% url 'login' %}";
+
+            const commentIcons = document.querySelectorAll('.comment-icon');
+
+            commentIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    e.preventDefault();
                     if (!isAuthenticated) {
                         window.location.href = loginUrl;
                         return;
                     }
-                    commentModal.style.display = 'block';
+                    const newsId = icon.getAttribute('data-news-id');
+                    fetch(`/comment/${newsId}/`, {
+                        method: 'GET',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        }
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const comments = JSON.parse(data.comments);
+                                const commentList = document.getElementById('commentList');
+                                commentList.innerHTML = '';
+                                comments.forEach(comment => {
+                                    const li = document.createElement('li');
+                                    li.textContent = comment.fields.comment;
+                                    commentList.appendChild(li);
+                                });
+                                document.getElementById('commentForm').setAttribute('data-news-id', newsId);
+                                document.getElementById('commentModal').style.display = 'block';
+                            }
+                        });
                 });
             });
+
+            const commentForm = document.getElementById('commentForm');
+            commentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(commentForm);
+                const newsId = commentForm.getAttribute('data-news-id');
+                fetch(`/comment/${newsId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const comments = JSON.parse(data.comments);
+                            const commentList = document.getElementById('commentList');
+                            commentList.innerHTML = '';
+                            comments.forEach(comment => {
+                                const li = document.createElement('li');
+                                li.textContent = comment.fields.comment;
+                                commentList.appendChild(li);
+                            });
+                            document.querySelector(`#comment_count_${newsId}`).textContent = data.comments_count;
+                        } else {
+                            alert('Yorum yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
+            
+            
+
+            document.querySelector('.close').onclick = function () {
+                document.getElementById('commentModal').style.display = 'none';
+            };
 
             ratingIcons.forEach(function (icon) {
                 icon.addEventListener('click', function (event) {
@@ -386,8 +446,8 @@
                     });
             });
         });
-
-       document.addEventListener('DOMContentLoaded', function () {
+        
+        document.addEventListener('DOMContentLoaded', function () {
         const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
         const loginUrl = "{% url 'login' %}";
 
@@ -420,6 +480,9 @@
             });
         });
     });
+
+    
+       
     </script>
     {% include 'comments.html' %}
     {% include 'points.html' %}
