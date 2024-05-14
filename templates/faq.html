@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+    <style>
+        .flex-container {
+            font-family: 'Inconsolata', monospace;
+            display: flex;
+            justify-content: center;
+            color: #9a9595;
+            font-size: 10pt;
+        }
+
+        a {
+            color: #173757;
+            text-decoration: none;
+            font-size: 10.5pt;
+        }
+
+        .main-table {
+            width: 80%;
+        }
+
+        .login-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Inconsolata', monospace;
+            background-color: #eddf9a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .faq-container {
+            max-width: 600px;
+            margin: 20px;
+            background-color: #eddf9a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .faq-question {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .faq-answer {
+            margin-top: 10px;
+        }
+
+        .login-form a {
+            color: #636366;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .login-form h3, .faq-title {
+            font-size: 24px;
+            color: #636366;
+        }
+
+        .login-form label {
+            font-size: 14px;
+            color: #636366;
+        }
+
+        .login-form p {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="flex-container" style="margin-top: 30px">
+    <table id="hnmain" class="main-table">
+        <tr>
+            <td class="header-cell">
+                <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;padding: 5px">
+                    <div class="logo-links">
+                        <a href="{% url 'index' %}">
+                            <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
+                        </a>
+                        <span class="pagetop">
+                            <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
+                            <a href="{% url 'index' %}">Home</a>
+                        </span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td class="spacer-cell"></td>
+        </tr>
+    </table>
+</div>
+
+<div class="flex-container" style="margin-top: 20px">
+    <div class="faq-container">
+        <h3 class="faq-title">Frequently Asked Questions</h3>
+
+        <div class="faq-item">
+            <div class="faq-question">Q1: How can I register?</div>
+            <div class="faq-answer">A: You can register by clicking on the "Sign Up" button on the top right corner.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Q2: How can I reset my password?</div>
+            <div class="faq-answer">A: You can reset your password by clicking on "Forgot Password" on the login page.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Q3: How can I contact support?</div>
+            <div class="faq-answer">A: You can contact support by sending an email to umutcelik6230@gmail.com.</div>
+        </div>
+
+        <!-- Daha fazla soru ve cevap ekleyebilirsiniz -->
+    </div>
+</div>
+{% endblock %}

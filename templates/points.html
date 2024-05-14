@@ -48,22 +48,24 @@
     <div class="modal-content">
         <span class="close" onclick="document.getElementById('ratingModal').style.display='none'">&times;</span>
         <h2>Rate</h2>
-        <form id="ratingForm" data-rating-id="">
+        <form id="ratingForm" data-rating-id="{{ news.id }}">
             {% csrf_token %}
             <label for="rating">Rating:</label>
             <input type="number" name="rating" min="1" max="5" step="1">
             <button type="submit">Submit</button>
         </form>
+
     </div>
 </div>
-
-
-
-
-
-
-
 <script>
+    var modal = document.getElementById('ratingModal');
+
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+
     var closeButtons = document.querySelectorAll('.close');
 
     closeButtons.forEach(function (button) {

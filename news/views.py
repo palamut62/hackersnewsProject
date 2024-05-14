@@ -6,12 +6,15 @@ from .models import News, Comment, Rating, Like
 from .forms import NewsForm, CommentForm, RatingForm
 from functions import time_ago
 
+
+
 def index(request):
-    news = News.objects.all()
+    news = News.objects.all().annotate(average_rating=Avg('ratings__rating'))
     for new in news:
         new.time_ago = time_ago(new.date)
         new.user_liked = new.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
     return render(request, 'home.html', {'news': news})
+
 
 def add_news(request):
     if request.method == 'POST':
@@ -75,6 +78,8 @@ def rating_view(request, rating_id):
 
 
 
+
+
 def like_view(request, news_id):
     if request.user.is_authenticated:
         news = get_object_or_404(News, id=news_id)
@@ -89,4 +94,5 @@ def like_view(request, news_id):
         return JsonResponse({'status': 'error', 'message': 'User is not authenticated'})
 
 
-
+def faq(request):
+    return render(request, 'faq.html')

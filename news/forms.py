@@ -1,5 +1,5 @@
 from django import forms
-from .models import News, Comment, Rating
+from .models import News, Comment
 
 class NewsForm(forms.ModelForm):
     title = forms.CharField(
@@ -18,7 +18,11 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['comment']
 
+
+from .models import Rating
+
 class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ['rating']
+
