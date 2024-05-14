@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close Modal Event
     document.querySelector('.close').onclick = function () {
-        document.getElementById('ratingModal').style.display = 'none';
+        ratingModal.style.display = 'none';
     };
 
     // Comment Icons Click Event

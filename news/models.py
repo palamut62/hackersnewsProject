@@ -26,7 +26,7 @@ class Rating(models.Model):
     rating = models.IntegerField()
 
     def __str__(self):
-        return f'{self.user.username} rating'
+        return f'{self.user.username} rating for {self.news.title}'
 
 
 class Comment(models.Model):

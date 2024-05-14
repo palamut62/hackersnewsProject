@@ -58,15 +58,15 @@
 
     .star:hover,
     .star.selected {
-        color: gold; /* Seçilmiş yıldız rengi */
+        color: #3c3b37; /* Seçilmiş yıldız rengi */
     }
 
 
 </style>
+<!-- Rating Modal -->
 <div id="ratingModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h4>Rate this news</h4>
         <form id="ratingForm" method="post">
             {% csrf_token %}
             <input type="hidden" name="rating" id="ratingValue">
@@ -81,6 +81,10 @@
         </form>
     </div>
 </div>
+
+<!-- Include comments.html and other required templates -->
+{% include 'comments.html' %}
+
 
 
 <script>
