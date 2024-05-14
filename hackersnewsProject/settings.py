@@ -27,6 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# settings.py
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']  # Gerekirse domaininizi buraya ekleyin
 
 # Application definition
 

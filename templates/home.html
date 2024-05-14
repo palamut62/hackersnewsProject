@@ -105,7 +105,8 @@
                                 </td>
                                 <td class="title-cell">
                                     <a href="{{ new.link }}">{{ new.short_description }}</a>
-                                    <span class="sitebit comhead">(<a href="{{ new.link }}">{{ new.category }}</a>)</span>
+                                    <span class="sitebit comhead">(<a
+                                            href="{{ new.link }}">{{ new.category }}</a>)</span>
                                 </td>
                             </tr>
                             <tr>
@@ -123,17 +124,20 @@
                                     <a href="#" class="comment-icon" data-news-id="{{ new.id }}">
                                         <i class="fas fa-comment"></i>
                                     </a>
-                                    <a href="item?id={{ new.id }}" id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
-                                
-                                    <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}" data-news-id="{{ new.id }}">
+                                    <a href="item?id={{ new.id }}"
+                                       id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
+
+                                    <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}"
+                                       data-news-id="{{ new.id }}">
                                         <i class="fas fa-heart"></i>
                                     </a>
                                     <span class="likes-count" id="likes_count_{{ new.id }}">
                                         {{ new.like_count }}
                                     </span>
-                                |
+                                    |
                                     {% if request.user.is_superuser %}
-                                        <a href="{% url 'edit_news' new.id %}"><i class="fas fa-pencil-alt edit-icon"></i></a>
+                                        <a href="{% url 'edit_news' new.id %}"><i
+                                                class="fas fa-pencil-alt edit-icon"></i></a>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -147,8 +151,10 @@
                         <span class="yclinks">
                             <a href="newsguidelines.html">Guidelines</a> | <a href="newsfaq.html">FAQ</a> |
                             <a href="lists">Lists</a> | <a href="https://github.com/HackerNews/API">API</a> |
-                            <a href="security.html">Security</a> | <a href="https://www.ycombinator.com/legal/">Legal</a> |
-                            <a href="https://www.ycombinator.com/apply/">Apply to YC</a> | <a href="mailto:hn@ycombinator.com">Contact</a>
+                            <a href="security.html">Security</a> | <a
+                                href="https://www.ycombinator.com/legal/">Legal</a> |
+                            <a href="https://www.ycombinator.com/apply/">Apply to YC</a> | <a
+                                href="mailto:hn@ycombinator.com">Contact</a>
                         </span>
                         <br><br>
                     </center>
@@ -175,29 +181,33 @@
         const commentIcons = document.querySelectorAll('.comment-icon');
         const likeIcons = document.querySelectorAll('.like-icon');
 
-        ratingIcons.forEach(icon => {
-            icon.addEventListener('click', (e) => {
-                if (!isAuthenticated) {
-                    window.location.href = loginUrl;
-                    return;
-                }
-                const newsId = icon.getAttribute('data-news-id');
-                fetch(`/rate/${newsId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ rating: 5 })  // Puanlamayı buradan ayarlayın, örneğin 5
-                }).then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            const scoreElement = document.querySelector(`#score_${newsId}`);
-                            scoreElement.textContent = data.rating;  // Puanı güncelle
-                        } else {
-                            alert('Puanlama yapılırken bir hata oluştu.');
-                        }
-                    });
+        document.addEventListener('DOMContentLoaded', function () {
+            const ratingIcons = document.querySelectorAll('.rating-icon');
+
+            ratingIcons.forEach(icon => {
+                icon.addEventListener('click', (e) => {
+                    if (!isAuthenticated) {
+                        window.location.href = loginUrl;
+                        return;
+                    }
+                    const newsId = icon.getAttribute('data-news-id');
+                    fetch(`/rate/${newsId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({rating: 5})
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const scoreElement = document.querySelector(`#score_${newsId}`);
+                                scoreElement.textContent = data.rating;
+                            } else {
+                                alert('Puanlama yapılırken bir hata oluştu.');
+                            }
+                        });
+                });
             });
         });
 
@@ -232,6 +242,9 @@
             });
         });
 
+        document.addEventListener('DOMContentLoaded', function () {
+        const likeIcons = document.querySelectorAll('.like-icon');
+
         likeIcons.forEach(icon => {
             icon.addEventListener('click', (e) => {
                 if (!isAuthenticated) {
@@ -250,14 +263,15 @@
                     .then(data => {
                         if (data.status === 'success') {
                             const likeCountElement = document.querySelector(`#likes_count_${newsId}`);
-                            likeCountElement.textContent = data.likes_count;  // Beğeni sayısını güncelle
-                            icon.classList.toggle('liked', data.user_liked);  // İkonun rengini değiştir
+                            likeCountElement.textContent = data.likes_count;
+                            icon.classList.toggle('liked', data.user_liked);
                         } else {
                             alert('Beğenme işlemi yapılırken bir hata oluştu.');
                         }
                     });
             });
         });
+    });
 
         document.addEventListener('DOMContentLoaded', function () {
             const commentModal = document.getElementById('commentModal');
@@ -371,6 +385,67 @@
                     });
             });
         });
+
+        document.addEventListener('DOMContentLoaded', function () {
+        const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+        const loginUrl = "{% url 'login' %}";
+
+        const ratingIcons = document.querySelectorAll('.rating-icon');
+        const likeIcons = document.querySelectorAll('.like-icon');
+
+        ratingIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                if (!isAuthenticated) {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                const newsId = icon.getAttribute('data-news-id');
+                fetch(`/rate/${newsId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rating: 5 })
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const scoreElement = document.querySelector(`#score_${newsId}`);
+                            scoreElement.textContent = data.rating;
+                        } else {
+                            alert('Puanlama yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
+        });
+
+        likeIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                if (!isAuthenticated) {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                e.preventDefault();
+                const newsId = icon.getAttribute('data-news-id');
+                fetch(`/like/${newsId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const likeCountElement = document.querySelector(`#likes_count_${newsId}`);
+                            likeCountElement.textContent = data.likes_count;
+                            icon.classList.toggle('liked', data.user_liked);
+                        } else {
+                            alert('Beğenme işlemi yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
+        });
+    });
     </script>
     {% include 'comments.html' %}
     {% include 'points.html' %}

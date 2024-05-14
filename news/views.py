@@ -60,14 +60,17 @@ def rating_view(request, rating_id):
     if request.method == 'POST':
         form = RatingForm(request.POST)
         if form.is_valid():
-            rating = form.save(commit=False)
-            rating.user = request.user
-            rating.news = news
-            rating.save()
+            rating, created = Rating.objects.update_or_create(
+                user=request.user, news=news,
+                defaults={'rating': form.cleaned_data['rating']}
+            )
             average_rating = news.ratings.aggregate(Avg('rating'))['rating__avg']
             return JsonResponse({'status': 'success', 'rating': average_rating})
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
 
 def like_view(request, news_id):
     if request.user.is_authenticated:
@@ -75,6 +78,12 @@ def like_view(request, news_id):
         like, created = Like.objects.get_or_create(news=news, user=request.user)
         if not created:
             like.delete()
-        return JsonResponse({'status': 'success', 'likes_count': news.likes.count(), 'user_liked': created})
+            user_liked = False
+        else:
+            user_liked = True
+        return JsonResponse({'status': 'success', 'likes_count': news.likes.count(), 'user_liked': user_liked})
     else:
         return JsonResponse({'status': 'error', 'message': 'User is not authenticated'})
+
+
+

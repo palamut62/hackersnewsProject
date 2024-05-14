@@ -47,16 +47,16 @@
 </style>
 <div id="commentModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="document.getElementById('commentModal').style.display='none'">&times;</span>
-        <h2>Comments</h2>
-        <ul id="comment_list"></ul>
-        <form id="commentForm" data-comment-id="">
+        <span class="close">&times;</span>
+        <ul id="commentList"></ul>
+        <form id="commentForm" method="post">
             {% csrf_token %}
-            <textarea name="comment" placeholder="Add a comment..."></textarea>
+            <textarea name="comment" required></textarea>
             <button type="submit">Submit</button>
         </form>
     </div>
 </div>
+
 
 
 
