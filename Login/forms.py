@@ -31,7 +31,7 @@ from .models import User
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = [ 'email', 'first_name', 'last_name']
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 
 from django.contrib.auth.forms import SetPasswordForm
