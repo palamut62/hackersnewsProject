@@ -3,18 +3,24 @@ from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzlocal
 
 def time_ago(date_time_obj):
-    # Şimdiki zamanı al ve onu "offset-aware" yap
+    # Get the current time and make it offset-aware
     now = datetime.now(tzlocal())
 
-    # Aradaki farkı hesapla
+    # Calculate the difference
     difference = relativedelta(now, date_time_obj)
 
-    # Farkı "x saat önce" veya "x gün önce" gibi bir formatta dön
-    if difference.days > 0:
-        return f"{difference.days} gün önce"
+    # Return the difference in a format like "x hours ago" or "x days ago"
+    if difference.years > 0:
+        return f"{difference.years} years ago"
+    elif difference.months > 0:
+        return f"{difference.months} months ago"
+    elif difference.weeks > 0:
+        return f"{difference.weeks} weeks ago"
+    elif difference.days > 0:
+        return f"{difference.days} days ago"
     elif difference.hours > 0:
-        return f"{difference.hours} saat önce"
+        return f"{difference.hours} hours ago"
     elif difference.minutes > 0:
-        return f"{difference.minutes} dakika önce"
+        return f"{difference.minutes} minutes ago"
     else:
-        return "birkaç saniye önce"
+        return "a few seconds ago"

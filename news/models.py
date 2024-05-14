@@ -8,7 +8,7 @@ CATEGORY = ['Ai', 'Tech', 'Python', 'Java', 'C++', 'C#', 'Ruby', 'JavaScript', '
             'Ai', 'MachineLearning', 'DeepLearning', 'DataScience', 'BigData', 'DataAnalysis', 'DataEngineering',
             'DataMining', 'DataVisualization', 'BusinessIntelligence', 'ArtificialIntelligence', 'NaturalLanguageProcessing',
             'NaturalLanguageUnderstanding', 'SpeechRecognition', 'SpeechSynthesis', 'ReinforcementLearning',
-            'Robotics', 'ComputerVision', 'CryptoCurrency', 'Blockchain', 'Bitcoin', 'Ethereum', 'Ripple', 'Litecoin',]
+            'Robotics', 'ComputerVision', 'CryptoCurrency', 'Blockchain', 'Bitcoin', 'Ethereum', 'Ripple', 'Litecoin']
 
 class News(models.Model):
     title = models.CharField(max_length=200)
@@ -36,3 +36,13 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.user.username} comment'
+
+class Like(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='likes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('news', 'user')
+
+    def __str__(self):
+        return f'{self.user.username} likes {self.news.title}'

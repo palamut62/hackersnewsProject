@@ -2,16 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.core import serializers
 from django.db.models import Avg
-from .models import News, Comment, Rating
+from .models import News, Comment, Rating, Like
 from .forms import NewsForm, CommentForm, RatingForm
 from functions import time_ago
 
 def index(request):
-    news_list = News.objects.all()
-    for news in news_list:
-        news.time_ago = time_ago(news.date)
-        news.average_rating = news.ratings.aggregate(Avg('rating'))['rating__avg'] or 0
-    return render(request, 'home.html', {'news': news_list})
+    news = News.objects.all()
+    for new in news:
+        new.time_ago = time_ago(new.date)
+    return render(request, 'home.html', {'news': news})
 
 def add_news(request):
     if request.method == 'POST':
@@ -54,7 +53,7 @@ def comment_view(request, comment_id):
     elif request.method == 'GET':
         comments = Comment.objects.filter(news=news).order_by('-created_at')
         comments_data = serializers.serialize('json', comments)
-        return JsonResponse({'status': 'success', 'comments': comments_data, 'comments_count': comments.count()})
+        return JsonResponse({'status': 'success', 'comments': comments_data})
 
 def rating_view(request, rating_id):
     news = get_object_or_404(News, id=rating_id)
@@ -65,7 +64,17 @@ def rating_view(request, rating_id):
             rating.user = request.user
             rating.news = news
             rating.save()
-            average_rating = Rating.objects.filter(news=news).aggregate(Avg('rating'))['rating__avg'] or 0
+            average_rating = news.ratings.aggregate(Avg('rating'))['rating__avg']
             return JsonResponse({'status': 'success', 'rating': average_rating})
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
+
+def like_view(request, news_id):
+    if request.user.is_authenticated:
+        news = get_object_or_404(News, id=news_id)
+        like, created = Like.objects.get_or_create(news=news, user=request.user)
+        if not created:
+            like.delete()
+        return JsonResponse({'status': 'success', 'likes_count': news.likes.count(), 'user_liked': created})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'User is not authenticated'})

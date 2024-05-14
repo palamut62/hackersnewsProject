@@ -9,9 +9,13 @@
             color: #9a9595;
         }
 
-        .fas.fa-star, .fas.fa-comment {
+        .fas.fa-star, .fas.fa-comment, .fas.fa-heart {
             color: #9a9595;
             font-size: 14px;
+        }
+
+        .liked {
+            color: red !important;
         }
 
         .modal {
@@ -113,12 +117,21 @@
                                     <span class="score" id="score_{{ new.id }}">
                                         {{ new.average_rating|default:0 }}
                                     </span>
-                                    by <a href="user?id={{ user.username }}" class="hnuser">{{ user }}</a>
-                                    <span class="age"><a href="item?id={{ new.id }}">{{ new.time_ago }}</a></span> |
+                                    |
+                                    by {{ user }}
+                                    <span class="age">{{ new.time_ago }}</span> |
                                     <a href="#" class="comment-icon" data-news-id="{{ new.id }}">
                                         <i class="fas fa-comment"></i>
                                     </a>
-                                    <a href="item?id={{ new.id }}" id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>
+                                    <a href="item?id={{ new.id }}" id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
+                                
+                                    <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}" data-news-id="{{ new.id }}">
+                                        <i class="fas fa-heart"></i>
+                                    </a>
+                                    <span class="likes-count" id="likes_count_{{ new.id }}">
+                                        {{ new.like_count }}
+                                    </span>
+                                |
                                     {% if request.user.is_superuser %}
                                         <a href="{% url 'edit_news' new.id %}"><i class="fas fa-pencil-alt edit-icon"></i></a>
                                     {% endif %}
@@ -155,159 +168,210 @@
     </footer>
     <script src="hn.js"></script>
     <script>
-    const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
-    const loginUrl = "{% url 'login' %}";
+        const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+        const loginUrl = "{% url 'login' %}";
 
-    const ratingIcons = document.querySelectorAll('.rating-icon');
-    const commentIcons = document.querySelectorAll('.comment-icon');
-
-    ratingIcons.forEach(icon => {
-        icon.addEventListener('click', (e) => {
-            if (!isAuthenticated) {
-                window.location.href = loginUrl;
-                return;
-            }
-            const newsId = icon.getAttribute('data-news-id');
-            fetch(`/rate/${newsId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ rating: 5 })  // Puanlamayı buradan ayarlayın, örneğin 5
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const scoreElement = document.querySelector(`#score_${newsId}`);
-                        scoreElement.textContent = data.rating;  // Puanı güncelle
-                    } else {
-                        alert('Puanlama yapılırken bir hata oluştu.');
-                    }
-                });
-        });
-    });
-
-    commentIcons.forEach(icon => {
-        icon.addEventListener('click', (e) => {
-            if (!isAuthenticated) {
-                window.location.href = loginUrl;
-                return;
-            }
-            e.preventDefault();
-            const newsId = icon.getAttribute('data-news-id');
-            fetch(`/comment/${newsId}/`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const comments = JSON.parse(data.comments);
-                        const commentList = document.querySelector('#commentModal ul');
-                        commentList.innerHTML = '';
-                        comments.forEach(comment => {
-                            const li = document.createElement('li');
-                            li.textContent = comment.fields.comment;
-                            commentList.appendChild(li);
-                        });
-                        document.querySelector('#commentForm').setAttribute('data-comment-id', newsId);
-                        document.getElementById('commentModal').style.display = 'block';
-                    }
-                });
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const commentModal = document.getElementById('commentModal');
-        const ratingModal = document.getElementById('ratingModal');
-        const commentForm = document.getElementById('commentForm');
-        const ratingForm = document.getElementById('ratingForm');
-        const commentIcons = document.querySelectorAll('.comment-icon');
         const ratingIcons = document.querySelectorAll('.rating-icon');
+        const commentIcons = document.querySelectorAll('.comment-icon');
+        const likeIcons = document.querySelectorAll('.like-icon');
 
-        commentIcons.forEach(function (icon) {
-            icon.addEventListener('click', function (event) {
-                event.preventDefault();
+        ratingIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
                 if (!isAuthenticated) {
                     window.location.href = loginUrl;
                     return;
                 }
-                commentModal.style.display = 'block';
+                const newsId = icon.getAttribute('data-news-id');
+                fetch(`/rate/${newsId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rating: 5 })  // Puanlamayı buradan ayarlayın, örneğin 5
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const scoreElement = document.querySelector(`#score_${newsId}`);
+                            scoreElement.textContent = data.rating;  // Puanı güncelle
+                        } else {
+                            alert('Puanlama yapılırken bir hata oluştu.');
+                        }
+                    });
             });
         });
 
-        ratingIcons.forEach(function (icon) {
-            icon.addEventListener('click', function (event) {
-                event.preventDefault();
+        commentIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
                 if (!isAuthenticated) {
                     window.location.href = loginUrl;
                     return;
                 }
-                ratingModal.style.display = 'block';
+                e.preventDefault();
+                const newsId = icon.getAttribute('data-news-id');
+                fetch(`/comment/${newsId}/`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const comments = JSON.parse(data.comments);
+                            const commentList = document.querySelector('#commentModal ul');
+                            commentList.innerHTML = '';
+                            comments.forEach(comment => {
+                                const li = document.createElement('li');
+                                li.textContent = comment.fields.comment;
+                                commentList.appendChild(li);
+                            });
+                            document.querySelector('#commentForm').setAttribute('data-comment-id', newsId);
+                            document.getElementById('commentModal').style.display = 'block';
+                        }
+                    });
             });
         });
 
-        commentForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(commentForm);
-            const commentId = commentForm.getAttribute('data-comment-id');
-            fetch(`/comment/${commentId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                credentials: 'same-origin'
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const comments = JSON.parse(data.comments);
-                        const commentList = document.querySelector(`#comment_list_${commentId}`);
-                        commentList.innerHTML = ''; // Mevcut yorumları temizle
-                        comments.forEach(comment => {
-                            const li = document.createElement('li');
-                            li.textContent = comment.fields.comment;
-                            commentList.appendChild(li);
+        likeIcons.forEach(icon => {
+            icon.addEventListener('click', (e) => {
+                if (!isAuthenticated) {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                e.preventDefault();
+                const newsId = icon.getAttribute('data-news-id');
+                fetch(`/like/${newsId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const likeCountElement = document.querySelector(`#likes_count_${newsId}`);
+                            likeCountElement.textContent = data.likes_count;  // Beğeni sayısını güncelle
+                            icon.classList.toggle('liked', data.user_liked);  // İkonun rengini değiştir
+                        } else {
+                            alert('Beğenme işlemi yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const commentModal = document.getElementById('commentModal');
+            const ratingModal = document.getElementById('ratingModal');
+            const commentForm = document.getElementById('commentForm');
+            const ratingForm = document.getElementById('ratingForm');
+            const commentIcons = document.querySelectorAll('.comment-icon');
+            const ratingIcons = document.querySelectorAll('.rating-icon');
+            const likeIcons = document.querySelectorAll('.like-icon');
+
+            commentIcons.forEach(function (icon) {
+                icon.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    if (!isAuthenticated) {
+                        window.location.href = loginUrl;
+                        return;
+                    }
+                    commentModal.style.display = 'block';
+                });
+            });
+
+            ratingIcons.forEach(function (icon) {
+                icon.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    if (!isAuthenticated) {
+                        window.location.href = loginUrl;
+                        return;
+                    }
+                    ratingModal.style.display = 'block';
+                });
+            });
+
+            likeIcons.forEach(icon => {
+                icon.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    if (!isAuthenticated) {
+                        window.location.href = loginUrl;
+                        return;
+                    }
+                    const newsId = icon.getAttribute('data-news-id');
+                    fetch(`/like/${newsId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const likeCountElement = document.querySelector(`#likes_count_${newsId}`);
+                                likeCountElement.textContent = data.likes_count;  // Beğeni sayısını güncelle
+                                icon.classList.toggle('liked', data.user_liked);  // İkonun rengini değiştir
+                            } else {
+                                alert('Beğenme işlemi yapılırken bir hata oluştu.');
+                            }
                         });
-                        const commentCount = document.querySelector(`#comment_count_${commentId}`);
-                        commentCount.textContent = data.comments_count; // Yorum sayısını güncelle
-                        commentModal.style.display = 'none';
-                    } else {
-                        alert('Yorum yapılırken bir hata oluştu.');
-                    }
                 });
-        });
+            });
 
-        ratingForm.addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(ratingForm);
-            const ratingId = ratingForm.getAttribute('data-rating-id');
-            fetch(`/rate/${ratingId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                credentials: 'same-origin'
-            }).then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        const scoreElement = document.querySelector(`#score_${ratingId}`);
-                        scoreElement.textContent = data.rating; // Puanı güncelle
-                        ratingModal.style.display = 'none';
-                    } else {
-                        alert('Puanlama yapılırken bir hata oluştu.');
-                    }
-                });
-        });
-    });
-    
-    
-    
-    
-</script>
+            commentForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(commentForm);
+                const commentId = commentForm.getAttribute('data-comment-id');
+                fetch(`/comment/${commentId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    credentials: 'same-origin'
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const comments = JSON.parse(data.comments);
+                            const commentList = document.querySelector(`#comment_list_${commentId}`);
+                            commentList.innerHTML = ''; // Mevcut yorumları temizle
+                            comments.forEach(comment => {
+                                const li = document.createElement('li');
+                                li.textContent = comment.fields.comment;
+                                commentList.appendChild(li);
+                            });
+                            const commentCount = document.querySelector(`#comment_count_${commentId}`);
+                            commentCount.textContent = data.comments_count; // Yorum sayısını güncelle
+                            commentModal.style.display = 'none';
+                        } else {
+                            alert('Yorum yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
 
+            ratingForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(ratingForm);
+                const ratingId = ratingForm.getAttribute('data-rating-id');
+                fetch(`/rate/${ratingId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    credentials: 'same-origin'
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const scoreElement = document.querySelector(`#score_${ratingId}`);
+                            scoreElement.textContent = data.rating; // Puanı güncelle
+                            ratingModal.style.display = 'none';
+                        } else {
+                            alert('Puanlama yapılırken bir hata oluştu.');
+                        }
+                    });
+            });
+        });
+    </script>
     {% include 'comments.html' %}
     {% include 'points.html' %}
 {% endblock %}

@@ -2,7 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import News, Comment, Rating
+from .models import News, Comment, Rating, Like
+
 
 class NewsAdmin(admin.ModelAdmin):
     list_display = ('title', 'rating', 'date','category')
@@ -24,3 +25,10 @@ class RatingAdmin(admin.ModelAdmin):
     search_fields = ['rating']
 
 admin.site.register(Rating)
+
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('news', 'user')
+    list_filter = ['news']
+    search_fields = ['user']
+
+admin.site.register(Like)
