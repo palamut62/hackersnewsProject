@@ -10,6 +10,7 @@ def index(request):
     news = News.objects.all()
     for new in news:
         new.time_ago = time_ago(new.date)
+        new.user_liked = new.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
     return render(request, 'home.html', {'news': news})
 
 def add_news(request):
@@ -69,6 +70,8 @@ def rating_view(request, rating_id):
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
 
 
 
