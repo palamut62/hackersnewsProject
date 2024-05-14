@@ -72,8 +72,8 @@
                         <div class="search-login">
                             <form method="get" action="search" style="display: inline;">
                                 <input type="text" name="q" value="" size="17" autocorrect="off" spellcheck="false"
-                                       autocapitalize="off" autocomplete="off">
-                                <input type="submit" value="search">
+                                       autocapitalize="off" autocomplete="off" placeholder="Search">
+                                
                             </form>
                             {% if user.is_authenticated %}
                                 <p style="display: inline;">{{ user.username }}</p>
@@ -92,59 +92,61 @@
             <tr>
                 <td class="spacer-cell"></td>
             </tr>
-            {% for new in news %}
-                <tr class="news-row">
-                    <td>
-                        <table class="news-item">
-                            <tr class="athing" id="news_{{ new.id }}">
-                                <td class="rank-cell">{{ forloop.counter }}.</td>
-                                <td class="vote-cell">
-                                    <center><a id="up_{{ new.id }}" href="vote?id={{ new.id }}&how=up&goto=news">
-                                        <div class="votearrow" title="upvote"></div>
-                                    </a></center>
-                                </td>
-                                <td class="title-cell">
-                                    <a href="{{ new.link }}">{{ new.short_description }}</a>
-                                    <span class="sitebit comhead">(<a
-                                            href="{{ new.link }}">{{ new.category }}</a>)</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2"></td>
-                                <td class="subtext-cell">
-                                    <a href="#" class="rating-icon" data-news-id="{{ new.id }}">
-                                        <i class="fas fa-star"></i>
-                                    </a>
-                                    <span class="score" id="score_{{ new.id }}">
-                            {{ new.average_rating|default:0 }}
-                        </span>
-                                    |
-                                    by {{ user }}
-                                    <span class="age">{{ new.time_ago }}</span> |
-                                    <a href="#" class="comment-icon" data-news-id="{{ new.id }}">
-                                        <i class="fas fa-comment"></i>
-                                    </a>
-                                    <a href="item?id={{ new.id }}"
-                                       id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
+            <tbody class="news-item">
+                {% for new in news %}
+                    <tr class="news-row">
+                        <td>
+                            <table class="news-item">
+                                <tr class="athing" id="news_{{ new.id }}">
+                                    <td class="rank-cell">{{ forloop.counter }}.</td>
+                                    <td class="vote-cell">
+                                        <center><a id="up_{{ new.id }}" href="vote?id={{ new.id }}&how=up&goto=news">
+                                            <div class="votearrow" title="upvote"></div>
+                                        </a></center>
+                                    </td>
+                                    <td class="title-cell">
+                                        <a href="{{ new.link }}">{{ new.short_description }}</a>
+                                        <span class="sitebit comhead">(<a
+                                                href="{{ new.link }}">{{ new.category }}</a>)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                    <td class="subtext-cell">
+                                        <a href="#" class="rating-icon" data-news-id="{{ new.id }}">
+                                            <i class="fas fa-star"></i>
+                                        </a>
+                                        <span class="score" id="score_{{ new.id }}">
+                                {{ new.average_rating|default:0 }}
+                            </span>
+                                        |
+                                        by {{ user }}
+                                        <span class="age">{{ new.time_ago }}</span> |
+                                        <a href="#" class="comment-icon" data-news-id="{{ new.id }}">
+                                            <i class="fas fa-comment"></i>
+                                        </a>
+                                        <a href="item?id={{ new.id }}"
+                                           id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
 
-                                    <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}"
-                                       data-news-id="{{ new.id }}">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                    <span class="likes-count" id="likes_count_{{ new.id }}">
-                            {{ new.likes.count }}
-                        </span>
-                                    |
-                                    {% if request.user.is_superuser %}
-                                        <a href="{% url 'edit_news' new.id %}"><i
-                                                class="fas fa-pencil-alt edit-icon"></i></a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            {% endfor %}
+                                        <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}"
+                                           data-news-id="{{ new.id }}">
+                                            <i class="fas fa-heart"></i>
+                                        </a>
+                                        <span class="likes-count" id="likes_count_{{ new.id }}">
+                                {{ new.likes.count }}
+                            </span>
+                                        |
+                                        {% if request.user.is_superuser %}
+                                            <a href="{% url 'edit_news' new.id %}"><i
+                                                    class="fas fa-pencil-alt edit-icon"></i></a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
 
             <tr>
                 <td class="footer-cell">

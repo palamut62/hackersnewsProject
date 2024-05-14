@@ -154,4 +154,70 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
     });
+
+    // Search Input Keyup Event
+    const searchInput = document.querySelector('input[name="q"]');
+    searchInput.addEventListener('keyup', function () {
+        const query = searchInput.value;
+        fetch(`/search-news/?q=${query}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(data => {
+                const newsTableBody = document.querySelector('.news-item');
+                newsTableBody.innerHTML = '';
+                data.results.forEach((news, index) => {
+                    const newsRow = `
+                        <tr class="news-row">
+                            <td>
+                                <table class="news-item">
+                                    <tr class="athing" id="news_${news.id}">
+                                        <td class="rank-cell">${index + 1}.</td>
+                                        <td class="vote-cell">
+                                            <center><a id="up_${news.id}" href="vote?id=${news.id}&how=up&goto=news">
+                                                <div class="votearrow" title="upvote"></div>
+                                            </a></center>
+                                        </td>
+                                        <td class="title-cell">
+                                            <a href="${news.link}">${news.short_description}</a>
+                                            <span class="sitebit comhead">(<a href="${news.link}">${news.category}</a>)</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"></td>
+                                        <td class="subtext-cell">
+                                            <a href="#" class="rating-icon" data-news-id="${news.id}">
+                                                <i class="fas fa-star"></i>
+                                            </a>
+                                            <span class="score" id="score_${news.id}">
+                                                ${news.average_rating || 0}
+                                            </span>
+                                            |
+                                            by ${news.user}
+                                            <span class="age">${news.time_ago}</span> |
+                                            <a href="#" class="comment-icon" data-news-id="${news.id}">
+                                                <i class="fas fa-comment"></i>
+                                            </a>
+                                            <a href="item?id=${news.id}" id="comment_count_${news.id}">${news.comments_count}</a>|
+                                            <a href="#" class="like-icon ${news.user_liked ? 'liked' : ''}" data-news-id="${news.id}">
+                                                <i class="fas fa-heart"></i>
+                                            </a>
+                                            <span class="likes-count" id="likes_count_${news.id}">
+                                                ${news.likes_count}
+                                            </span>
+                                            |
+                                            ${isAuthenticated && news.is_superuser ? `<a href="/edit_news/${news.id}/"><i class="fas fa-pencil-alt edit-icon"></i></a>` : ''}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    `;
+                    newsTableBody.insertAdjacentHTML('beforeend', newsRow);
+                });
+            });
+    });
 });

@@ -75,6 +75,31 @@ def rating_view(request, rating_id):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 
+def search_news(request):
+    query = request.GET.get('q', '')
+    if query:
+        results = News.objects.filter(title__icontains=query)
+    else:
+        results = News.objects.all()
+
+    results_data = []
+    for news in results:
+        results_data.append({
+            'id': news.id,
+            'title': news.title,
+            'short_description': news.short_description,
+            'link': news.link,
+            'category': news.category,
+            'average_rating': news.ratings.aggregate(Avg('rating'))['rating__avg'] or 0,
+            'comments_count': news.comments.count(),
+            'likes_count': news.likes.count(),
+            'user_liked': news.likes.filter(user=request.user).exists() if request.user.is_authenticated else False,
+            'time_ago': time_ago(news.date)
+        })
+
+    return JsonResponse({'results': results_data})
+
+
 
 
 
