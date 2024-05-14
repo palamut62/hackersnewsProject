@@ -4,7 +4,7 @@
         flex-direction: column;
         align-items: center;
         font-family: 'Inconsolata', monospace;
-        background-color: #eddf9a;
+        background-color: #f3e7ad;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
@@ -43,20 +43,45 @@
         text-decoration: none;
         cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
     }
+
+    .star-rating {
+        font-size: 2em;
+        display: flex;
+        justify-content: center;
+    }
+
+    .star {
+        cursor: pointer;
+        color: #ccc; /* Varsayılan yıldız rengi */
+    }
+
+    .star:hover,
+    .star.selected {
+        color: gold; /* Seçilmiş yıldız rengi */
+    }
+
+
 </style>
 <div id="ratingModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="document.getElementById('ratingModal').style.display='none'">&times;</span>
         <h2>Rate</h2>
-        <form id="ratingForm" data-rating-id="{{ news.id }}">
+        <form id="ratingForm" data-rating-id="">
             {% csrf_token %}
-            <label for="rating">Rating:</label>
-            <input type="number" name="rating" min="1" max="5" step="1">
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <input type="hidden" name="rating" id="ratingValue">
             <button type="submit">Submit</button>
         </form>
-
     </div>
 </div>
+
+
 <script>
     var modal = document.getElementById('ratingModal');
 

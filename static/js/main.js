@@ -8,6 +8,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const likeIcons = document.querySelectorAll('.like-icon');
     const ratingModal = document.getElementById('ratingModal');
     const ratingForm = document.getElementById('ratingForm');
+    const stars = document.querySelectorAll('.star');
+    let ratingValue = 0;
+
+    // Yıldız tıklama olaylarını işleme
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            ratingValue = star.getAttribute('data-value');
+            document.getElementById('ratingValue').value = ratingValue;
+            stars.forEach(s => s.classList.remove('selected'));
+            for (let i = 0; i < ratingValue; i++) {
+                stars[i].classList.add('selected');
+            }
+        });
+    });
 
     // Rating Icons Click Event
     ratingIcons.forEach(icon => {
@@ -17,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             ratingModal.style.display = 'block';
+            const newsId = icon.getAttribute('data-news-id');
+            ratingForm.setAttribute('data-rating-id', newsId);
         });
     });
 
