@@ -49,15 +49,11 @@ def comment_view(request, comment_id):
             comment.user = request.user
             comment.news = news
             comment.save()
-            comments = Comment.objects.filter(news=news).order_by('-created_at')
-            comments_data = serializers.serialize('json', comments)
-            return JsonResponse({'status': 'success', 'comments': comments_data, 'comments_count': comments.count()})
-        else:
-            return JsonResponse({'status': 'error', 'errors': form.errors})
-    elif request.method == 'GET':
-        comments = Comment.objects.filter(news=news).order_by('-created_at')
-        comments_data = serializers.serialize('json', comments)
-        return JsonResponse({'status': 'success', 'comments': comments_data})
+            return redirect('index')  # yorum eklendikten sonra anasayfaya yönlendirme yapılıyor
+    comments = Comment.objects.filter(news=news).order_by('-created_at')
+    context = {'comments': comments, 'news': news}
+    return render(request, 'comments.html', context)
+
 
 
 def rating_view(request, rating_id):
@@ -65,58 +61,35 @@ def rating_view(request, rating_id):
     if request.method == 'POST':
         form = RatingForm(request.POST)
         if form.is_valid():
+            # Kullanıcının daha önce oylama yapmış olup olmadığını kontrol etmek yerine,
+            # mevcut oylamayı güncelliyoruz veya yeni bir oylama oluşturuyoruz
             rating, created = Rating.objects.update_or_create(
                 user=request.user,
                 news=news,
                 defaults={'rating': form.cleaned_data['rating']}
             )
             average_rating = news.ratings.aggregate(Avg('rating'))['rating__avg']
-            return JsonResponse({'status': 'success', 'rating': average_rating})
+            return redirect('index')  # puanlama işlemi tamamlandıktan sonra anasayfaya yönlendirme yapılıyor
         else:
             return JsonResponse({'status': 'error', 'errors': form.errors})
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-
-
-
-def search_news(request):
-    query = request.GET.get('q', '')
-    if query:
-        results = News.objects.filter(title__icontains=query)
-    else:
-        results = News.objects.all()
-
-    results_data = []
-    for news in results:
-        results_data.append({
-            'id': news.id,
-            'title': news.title,
-            'short_description': news.short_description,
-            'link': news.link,
-            'category': news.category,
-            'average_rating': news.ratings.aggregate(Avg('rating'))['rating__avg'] or 0,
-            'comments_count': news.comments.count(),
-            'likes_count': news.likes.count(),
-            'user_liked': news.likes.filter(user=request.user).exists() if request.user.is_authenticated else False,
-            'time_ago': time_ago(news.date)
-        })
-
-    return JsonResponse({'results': results_data})
-
-
+    return render(request, 'points.html')
 
 def like_view(request, news_id):
-    if request.user.is_authenticated:
-        news = get_object_or_404(News, id=news_id)
-        like, created = Like.objects.get_or_create(news=news, user=request.user)
-        if not created:
-            like.delete()
-            user_liked = False
-        else:
-            user_liked = True
-        return JsonResponse({'status': 'success', 'likes_count': news.likes.count(), 'user_liked': user_liked})
-    else:
-        return JsonResponse({'status': 'error', 'message': 'User is not authenticated'})
-
+    news = get_object_or_404(News, id=news_id)
+    like, created = Like.objects.get_or_create(user=request.user, news=news)
+    if not created:
+        like.delete()
+    return redirect('index')
 
 def faq(request):
     return render(request, 'faq.html')
+
+def search_news(request):
+    query = request.GET.get('query')
+    news = News.objects.filter(title__icontains=query)
+    return render(request, 'home.html', {'news': news})
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.delete()
+    return redirect('comment_view', comment.news.id)

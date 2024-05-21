@@ -113,7 +113,7 @@
                             <tr>
                                 <td colspan="2"></td>
                                 <td class="subtext-cell">
-                                    <a href="#" class="rating-icon" data-news-id="{{ new.id }}">
+                                    <a href="{% url 'rating_view' new.id %}" class="rating-icon" data-news-id="{{ new.id }}">
                                         <i class="fas fa-star"></i>
                                     </a>
                                     <span class="score" id="score_{{ new.id }}">
@@ -122,13 +122,14 @@
                                     |
                                     by {{ user }}
                                     <span class="age">{{ new.time_ago }}</span> |
-                                    <a href="#" class="comment-icon" data-news-id="{{ new.id }}">
+                                    <a href="{% url 'comment_view' new.id %}">
                                         <i class="fas fa-comment"></i>
                                     </a>
                                     <a href="item?id={{ new.id }}"
                                        id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
 
-                                    <a href="#" class="like-icon {% if new.user_liked %}liked{% endif %}"
+                                    <a href="{% url 'like_view' new.id %}"
+                                       class="like-icon {% if new.user_liked %}liked{% endif %}"
                                        data-news-id="{{ new.id }}">
                                         <i class="fas fa-heart"></i>
                                     </a>
@@ -173,11 +174,8 @@
     </footer>
     <script src="hn.js"></script>
     <script>
-        window.isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
-        window.loginUrl = "{% url 'login' %}";
-        window.csrfToken = '{{ csrf_token }}';
+
     </script>
-    <script src="{% static 'js/main.js' %}"></script>
     {% include 'comments.html' %}
     {% include 'points.html' %}
 {% endblock %}

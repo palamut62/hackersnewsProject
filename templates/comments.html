@@ -1,5 +1,10 @@
 <style>
+    
     .modal-content {
+        position: fixed;  /* Modalın pozisyonunu sabitler */
+        top: 50%;  /* Modalı sayfanın ortasına yerleştirir */
+        left: 50%;  /* Modalı sayfanın ortasına yerleştirir */
+        transform: translate(-50%, -50%);  /* Modalın tam olarak sayfanın ortasında olmasını sağlar */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -10,6 +15,7 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
         width: 200px; /* Modal formun genişliğini ayarlar */
     }
+
 
     .modal-content textarea, .modal-content input {
         margin: 5px 0;
@@ -30,11 +36,13 @@
     }
 
     .close {
+         position: absolute; /* Çarpı işaretinin pozisyonunu sabitler */
+        right: 10px; /* Çarpı işaretini sağa hizalar */
+        top: 5px; /* Çarpı işaretini yukarı hizalar */
         color: #aaa;
         float: right; /* Çarpı işaretini sağa hizalar */
         font-size: 28px;
         font-weight: bold;
-        margin: -10px -10px 0 0; /* Çarpı işaretini modal formun dışına çıkarır */
     }
 
     .close:hover,
@@ -44,32 +52,39 @@
         cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
     }
 
+    .delete-icon {
+        color: red;
+        font-size: 20px;
+        text-decoration: none;
+    }
+
 </style>
 <div id="commentModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
-        <ul id="commentList"></ul>
-        <form id="commentForm" method="post">
-            {% csrf_token %}
-            <textarea name="comment" required></textarea>
-            <button type="submit">Submit</button>
-        </form>
+        <a href="{% url 'index' %}">
+             <span class="close">x</span>
+        </a>
+           
+            <ul id="commentList">
+                {% for comment in comments %}
+                    <li>{{ comment.comment }}-<a href="{% url 'delete_comment' comment.id %}" class="delete-icon"
+                                                 title="Delete Item">
+                        &#128465; <!-- This is the HTML entity for a trash bin symbol -->
+                    </a></li>
+                {% endfor %}
+
+
+            </ul>
+            <form id="commentForm" method="post">
+                {% csrf_token %}
+                <textarea name="comment" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
     </div>
 </div>
 
 
-
-
-
 <script>
-    var closeButtons = document.querySelectorAll('.close');
-
-    closeButtons.forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            console.log('Çarpı işaretine tıklandı'); // Bu, çarpı işaretine tıklandığında yazdırılmalı
-            event.target.parentElement.parentElement.style.display = 'none';
-        });
-    });
 
 
 </script>

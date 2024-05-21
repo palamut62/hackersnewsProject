@@ -1,10 +1,14 @@
 <style>
     .modal-content {
+        position: fixed;  /* Modalın pozisyonunu sabitler */
+        top: 50%;  /* Modalı sayfanın ortasına yerleştirir */
+        left: 50%;  /* Modalı sayfanın ortasına yerleştirir */
+        transform: translate(-50%, -50%);  /* Modalın tam olarak sayfanın ortasında olmasını sağlar */
         display: flex;
         flex-direction: column;
         align-items: center;
         font-family: 'Inconsolata', monospace;
-        background-color: #ffffff;
+        background-color: #eddf9a;
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
@@ -29,12 +33,14 @@
         cursor: pointer;
     }
 
+  
     .close {
+        position: absolute; /* Çarpı işaretinin pozisyonunu sabitler */
+        right: 10px; /* Çarpı işaretini sağa hizalar */
+        top: 5px; /* Çarpı işaretini yukarı hizalar */
         color: #aaa;
-        float: right; /* Çarpı işaretini sağa hizalar */
         font-size: 28px;
         font-weight: bold;
-        margin: -10px -10px 0 0; /* Çarpı işaretini modal formun dışına çıkarır */
     }
 
     .close:hover,
@@ -44,11 +50,8 @@
         cursor: pointer; /* Çarpı işaretinin üzerine gelindiğinde el işaretini gösterir */
     }
 
-    .star-rating {
-        font-size: 2em;
-        display: flex;
-        justify-content: center;
-    }
+
+   
 
     .star {
         cursor: pointer;
@@ -60,13 +63,13 @@
     .star.selected {
         color: #3c3b37; /* Seçilmiş yıldız rengi */
     }
-
-
 </style>
 <!-- Rating Modal -->
 <div id="ratingModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+         <a href="{% url 'index' %}">
+             <span class="close">x</span>
+        </a>
         <form id="ratingForm" method="post">
             {% csrf_token %}
             <input type="hidden" name="rating" id="ratingValue">
@@ -82,26 +85,18 @@
     </div>
 </div>
 
-<!-- Include comments.html and other required templates -->
-{% include 'comments.html' %}
-
-
-
 <script>
-    var modal = document.getElementById('ratingModal');
-
-    window.onclick = function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
-
-    var closeButtons = document.querySelectorAll('.close');
-
-    closeButtons.forEach(function (button) {
-        button.addEventListener('click', function (event) {
-            console.log('Çarpı işaretine tıklandı'); // Bu, çarpı işaretine tıklandığında yazdırılmalı
-            event.target.parentElement.parentElement.style.display = 'none';
+document.querySelectorAll('.star').forEach(function(star) {
+    star.addEventListener('click', function() {
+        var value = this.dataset.value;
+        document.getElementById('ratingValue').value = value;
+        this.parentNode.querySelectorAll('.star').forEach(function(sibling) {
+            sibling.classList.toggle('selected', sibling.dataset.value <= value);
         });
     });
+});
 </script>
+
+
+
+
