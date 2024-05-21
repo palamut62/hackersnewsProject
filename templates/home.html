@@ -4,6 +4,25 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        .category-list {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .category-item {
+            margin: 0 10px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+        }
+
+        .category-item:hover {
+            background-color: #e0e0e0;
+        }
+
         .edit-icon {
             font-size: 12px;
             color: #9a9595;
@@ -12,6 +31,7 @@
         .fas.fa-star, .fas.fa-comment, .fas.fa-heart {
             color: #9a9595;
             font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Gölgeler eklendi */
         }
 
         .liked {
@@ -64,7 +84,6 @@
         .rank-cell {
             width: 1%;
             text-align: right;
-        
         }
 
         .vote-cell {
@@ -75,6 +94,7 @@
         /* Haber başlıkları ve detayları için hücre genişliklerini ayarlayın */
         .title-cell {
             width: 60%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Gölgeler eklendi */
         }
 
         .subtext-cell {
@@ -90,14 +110,12 @@
 
         .news-item td {
             border: none;
-            padding: 3px 5px;
+            padding: 2px 5px;
         }
 
         .news-row {
             border-bottom: 1px solid #e0e0e0;
         }
-
-
     </style>
 {% endblock %}
 {% block content %}
@@ -119,15 +137,12 @@
                             <form method="get" action="search" style="display: inline;">
                                 <input type="text" name="q" value="" size="17" autocorrect="off" spellcheck="false"
                                        autocapitalize="off" autocomplete="off" placeholder="Search">
-
                             </form>
                             {% if user.is_authenticated %}
                                 <a href="{% url 'profile' %}"
                                    style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
                                     <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
                                 </a>
-
-
                                 {% if user.is_superuser %}
                                     <a href="{% url 'add_news' %}">Add News</a>
                                 {% endif %}
@@ -140,11 +155,25 @@
                 </td>
             </tr>
             <tr>
+                <td>
+                    <div class="category-list">
+                        {% for category in categories %}
+                            <div class="category-item" onclick="filterNews('{{ category.category }}')">
+                                {{ category.category }} ({{ category.count }})
+                            </div>
+                        {% endfor %}
+                        <div class="category-item" onclick="filterNews('all')">
+                            All
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
                 <td class="spacer-cell"></td>
             </tr>
-            <tbody class="news-item">
+            <tbody class="news-item" id="news-list">
             {% for new in news %}
-                <tr class="news-row">
+                <tr class="news-row" data-category="{{ new.category }}">
                     <td>
                         <table class="news-item">
                             <tr class="athing" id="news_{{ new.id }}">
@@ -155,9 +184,8 @@
                                     </a></center>
                                 </td>
                                 <td class="title-cell">
-                                    <a href="{{ new.link }}">{{ new.short_description }}</a>
-                                    <span class="sitebit comhead">(<a
-                                            href="{{ new.link }}">{{ new.category }}</a>)</span>
+                                    <a href="{{ new.link }}" target="_blank">{{ new.short_description }}</a>
+                                    <span class="sitebit comhead">(<a href="{{ new.link }}">{{ new.category }}</a>)</span>
                                 </td>
                             </tr>
                             <tr>
@@ -175,8 +203,8 @@
                                     {% endif %}
 
                                     <span class="score" id="score_{{ new.id }}">
-                                {{ new.average_rating|floatformat:1|default:0 }}
-                            </span>
+                                        {{ new.average_rating|floatformat:1|default:0 }}
+                                    </span>
                                     |
                                     by {{ user }}
                                     <span class="age">{{ new.time_ago }}</span> |
@@ -189,13 +217,9 @@
                                             <i class="fas fa-comment"></i>
                                         </a>
                                     {% endif %}
-
-
                                     <a href="item?id={{ new.id }}"
-                                       id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
-
+                                       id="comment_count_{{ new.id }}">{{ new.comments.count }}</a> |
                                     {% if user.is_authenticated %}
-
                                         <a href="{% url 'like_view' new.id %}"
                                            class="like-icon {% if new.user_liked %}liked{% endif %}"
                                            data-news-id="{{ new.id }}">
@@ -207,8 +231,8 @@
                                         </a>
                                     {% endif %}
                                     <span class="likes-count" id="likes_count_{{ new.id }}">
-                                {{ new.likes.count }}
-                            </span>
+                                        {{ new.likes.count }}
+                                    </span>
                                     |
                                     {% if request.user.is_superuser %}
                                         <a href="{% url 'edit_news' new.id %}"><i
@@ -221,15 +245,13 @@
                 </tr>
             {% endfor %}
             </tbody>
-
             <tr>
                 <td class="footer-cell">
                     <div style="display: flex; justify-content: center; align-items: center; height: 30px;">
-            <span class="yclinks">
-                <a href="http://umutins62.pythonanywhere.com/" target="_blank">About</a> | <a
-                    href="{% url 'faq' %}">FAQ</a>
-
-            </span>
+                        <span class="yclinks">
+                            <a href="http://umutins62.pythonanywhere.com/" target="_blank">About</a> | <a
+                                href="{% url 'faq' %}">FAQ</a>
+                        </span>
                     </div>
                 </td>
             </tr>
@@ -247,7 +269,16 @@
     </footer>
     <script src="hn.js"></script>
     <script>
-
+        function filterNews(category) {
+            var rows = document.querySelectorAll('.news-row');
+            rows.forEach(function(row) {
+                if (category === 'all' || row.getAttribute('data-category') === category) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
     </script>
     {% include 'comments.html' %}
     {% include 'points.html' %}

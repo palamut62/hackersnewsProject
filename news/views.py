@@ -5,15 +5,18 @@ from django.db.models import Avg
 from .models import News, Comment, Rating, Like
 from .forms import NewsForm, CommentForm, RatingForm
 from functions import time_ago
+from django.db.models import Count
 
 
 
 def index(request):
     news = News.objects.all().annotate(average_rating=Avg('ratings__rating'))
+    categories = News.objects.values('category').annotate(count=Count('category')).order_by('-count')
+
     for new in news:
         new.time_ago = time_ago(new.date)
         new.user_liked = new.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
-    return render(request, 'home.html', {'news': news})
+    return render(request, 'home.html', {'news': news, 'categories': categories})
 
 
 def add_news(request):
