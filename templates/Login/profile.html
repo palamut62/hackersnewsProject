@@ -1,24 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block style %}
-
-
     <style>
-        /* Buraya signup.html sayfasındaki stil kodlarını ekleyin */
         .flex-container-2 {
             font-family: 'Inconsolata', monospace;
             display: flex;
             justify-content: center;
-            align-items: center; /* Dikey eksende merkeze alır */
+            align-items: center;
             color: #9a9595;
             font-size: 10pt;
-            height: 100vh; /* Viewport'un yüksekliğini alır */
-
+            height: 100vh;
         }
 
         a {
-            color: #173757; /* Bu kod tüm linklerin rengini kırmızı yapar */
-            text-decoration: none; /* Bu kod tüm linklerin altını çizgisini kaldırır */
+            color: #173757;
+            text-decoration: none;
             font-size: 10.5pt;
         }
 
@@ -36,7 +32,6 @@
 
         .header-cell, .footer-cell {
             background-color: #eddf9a;
-
         }
 
         .logo-cell img {
@@ -58,7 +53,6 @@
             height: 10px;
         }
 
-
         .login-card {
             display: flex;
             flex-direction: column;
@@ -68,41 +62,47 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            width: 400px;
         }
 
         .login-form {
             display: flex;
-            flex-direction: column; /* Form elemanlarını dikey sıralar */
+            flex-direction: column;
+        }
+
+        .login-form label {
+            margin-top: 10px;
         }
 
         .login-form input {
-            margin: 5px 0;
+            margin-top: 5px;
             padding: 5px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 200px;
+            width: 100%;
         }
 
         .form-button {
-            margin: 5px 0;
-            padding: 5px;
+            margin-top: 15px;
+            padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 200px;
+            width: 100%;
             background-color: #f1f1f1;
             cursor: pointer;
         }
+
+        .change-password-link {
+            margin-top: 10px;
+            display: block;
+            text-align: center;
+        }
     </style>
-
 {% endblock %}
-
 
 {% block content %}
     <div class="flex-container flex-container-1" style="margin-top: 30px">
-
-
         <table id="hnmain" class="main-table">
-
             <tr>
                 <td class="header-cell">
                     <div class="header-container"
@@ -112,14 +112,17 @@
                                 <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
                             </a>
                             <span class="pagetop">
-                            <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
-                          
-                        </span>
+                                <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
+                            </span>
                         </div>
                         <div class="search-login">
-                            <a href="{% url 'index' %}">Home</a>
+
                             {% if user.is_authenticated %}
-                                <p style="display: inline;">{{ user.username }}</p>
+                                <a href="{% url 'profile' %}"
+                                   style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
+                                    <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
+                                </a>
+                                <a href="{% url 'index' %}">Home</a>
                                 <a href="{% url 'logout' %}">logout</a>
                                 {% if user.is_superuser %}
                                     <a href="{% url 'add_news' %}">Add News</a>
@@ -134,17 +137,16 @@
             <tr>
                 <td class="spacer-cell"></td>
             </tr>
-
         </table>
     </div>
     <div class="flex-container flex-container-2">
         <div class="login-card">
             <h2>Profile</h2>
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" class="login-form">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="form-button">Update Profile</button>
-                <a href="{% url 'change_password' %}">Change Password</a>
+                <a href="{% url 'change_password' %}" class="change-password-link">Change Password</a>
             </form>
         </div>
     </div>

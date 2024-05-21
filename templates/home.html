@@ -76,12 +76,15 @@
 
                             </form>
                             {% if user.is_authenticated %}
-                                <p style="display: inline;font-size: 16px">{{ user.username }}</p>
-                                <a href="{% url 'logout' %}">logout</a>
-                                <a href="{% url 'profile' %}">profile</a>
+                                <a href="{% url 'profile' %}" style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
+    <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
+</a>
+                                
+
                                 {% if user.is_superuser %}
                                     <a href="{% url 'add_news' %}">Add News</a>
                                 {% endif %}
+                                <a href="{% url 'logout' %}">logout</a>
                             {% else %}
                                 <a href="{% url 'login' %}">login</a>
                             {% endif %}
@@ -113,11 +116,12 @@
                             <tr>
                                 <td colspan="2"></td>
                                 <td class="subtext-cell">
-                                    <a href="{% url 'rating_view' new.id %}" class="rating-icon" data-news-id="{{ new.id }}">
+                                    <a href="{% url 'rating_view' new.id %}" class="rating-icon"
+                                       data-news-id="{{ new.id }}">
                                         <i class="fas fa-star"></i>
                                     </a>
                                     <span class="score" id="score_{{ new.id }}">
-                                {{ new.average_rating|default:0 }}
+                                {{ new.average_rating|floatformat:1|default:0 }}
                             </span>
                                     |
                                     by {{ user }}

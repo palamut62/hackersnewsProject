@@ -114,17 +114,17 @@
                         </span>
                         </div>
                         <div class="search-login">
-                            <a href="{% url 'index' %}">Home</a>
+                            
                             {% if user.is_authenticated %}
-                                <p style="display: inline;">{{ user.username }}</p>
-                                <a href="{% url 'logout' %}">logout</a>
-                                <a href="{% url 'profile' %}">profile</a>
-                                {% if user.is_superuser %}
-                                    <a href="{% url 'add_news' %}">Add News</a>
-                                {% endif %}
+                                <a href="{% url 'profile' %}" style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
+    <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
+                                
+                               <a href="{% url 'index' %}">Home</a>
+                              
                             {% else %}
                                 <a href="{% url 'login' %}">login</a>
                             {% endif %}
+                        <a href="{% url 'logout' %}">logout</a>
                         </div>
                     </div>
                 </td>
