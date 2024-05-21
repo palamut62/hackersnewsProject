@@ -1,6 +1,4 @@
 {% load static %}
-{#{% load humanize %}#}
-{#{% load thumbnail %}#}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,13 +7,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" href="{% static 'img/icon.png' %}" type="image/x-icon">
-    <title>Ai-News</title>
+    <title>Ai-News - Artificial Intelligence, Crypto, and Technology News</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Stay updated with the latest news and trends in artificial intelligence, cryptocurrency, and other cutting-edge technologies.">
+    <meta name="keywords" content="artificial intelligence, AI, crypto, cryptocurrency, blockchain, technology, tech news, AI news, crypto news">
+    <meta name="author" content="Ai-News">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Ai-News - Artificial Intelligence, Crypto, and Technology News">
+    <meta property="og:description" content="Stay updated with the latest news and trends in artificial intelligence, cryptocurrency, and other cutting-edge technologies.">
+    <meta property="og:image" content="{% static 'img/og-image.png' %}">
+    <meta property="og:url" content="https://www.ai-news.com">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Ai-News - Artificial Intelligence, Crypto, and Technology News">
+    <meta name="twitter:description" content="Stay updated with the latest news and trends in artificial intelligence, cryptocurrency, and other cutting-edge technologies.">
+    <meta name="twitter:image" content="{% static 'img/og-image.png' %}">
+    
     {% block style %}
     {% endblock %}
 </head>
-
+<body>
 {% block content %}
 {% endblock %}
-
-
+</body>
 </html>

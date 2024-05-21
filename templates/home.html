@@ -76,10 +76,11 @@
 
                             </form>
                             {% if user.is_authenticated %}
-                                <a href="{% url 'profile' %}" style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
-    <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
-</a>
-                                
+                                <a href="{% url 'profile' %}"
+                                   style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
+                                    <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
+                                </a>
+
 
                                 {% if user.is_superuser %}
                                     <a href="{% url 'add_news' %}">Add News</a>
@@ -116,27 +117,49 @@
                             <tr>
                                 <td colspan="2"></td>
                                 <td class="subtext-cell">
-                                    <a href="{% url 'rating_view' new.id %}" class="rating-icon"
-                                       data-news-id="{{ new.id }}">
-                                        <i class="fas fa-star"></i>
-                                    </a>
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'rating_view' new.id %}" class="rating-icon"
+                                           data-news-id="{{ new.id }}">
+                                            <i class="fas fa-star"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'login' %}" class="rating-icon">
+                                            <i class="fas fa-star"></i>
+                                        </a>
+                                    {% endif %}
+
                                     <span class="score" id="score_{{ new.id }}">
                                 {{ new.average_rating|floatformat:1|default:0 }}
                             </span>
                                     |
                                     by {{ user }}
                                     <span class="age">{{ new.time_ago }}</span> |
-                                    <a href="{% url 'comment_view' new.id %}">
-                                        <i class="fas fa-comment"></i>
-                                    </a>
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'comment_view' new.id %}">
+                                            <i class="fas fa-comment"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'login' %}">
+                                            <i class="fas fa-comment"></i>
+                                        </a>
+                                    {% endif %}
+
+
                                     <a href="item?id={{ new.id }}"
                                        id="comment_count_{{ new.id }}">{{ new.comments.count }}</a>|
 
-                                    <a href="{% url 'like_view' new.id %}"
-                                       class="like-icon {% if new.user_liked %}liked{% endif %}"
-                                       data-news-id="{{ new.id }}">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
+                                    {% if user.is_authenticated %}
+
+                                        <a href="{% url 'like_view' new.id %}"
+                                           class="like-icon {% if new.user_liked %}liked{% endif %}"
+                                           data-news-id="{{ new.id }}">
+                                            <i class="fas fa-heart"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'login' %}" class="like-icon">
+                                            <i class="fas fa-heart"></i>
+                                        </a>
+                                    {% endif %}
                                     <span class="likes-count" id="likes_count_{{ new.id }}">
                                 {{ new.likes.count }}
                             </span>
