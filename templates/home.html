@@ -135,8 +135,8 @@
                         </div>
                         <div class="search-login">
                             <form method="get" action="search" style="display: inline;">
-                                <input type="text" name="q" value="" size="17" autocorrect="off" spellcheck="false"
-                                       autocapitalize="off" autocomplete="off" placeholder="Search">
+                                <input type="text" id="search" name="q" value="" size="17" autocorrect="off" spellcheck="false"
+                                       autocapitalize="off" autocomplete="off" placeholder="Search" onkeyup="searchNews()">
                             </form>
                             {% if user.is_authenticated %}
                                 <a href="{% url 'profile' %}"
@@ -267,12 +267,27 @@
         </div>
         <p class="design-credit">Design by Umut Celik | 2024</p>
     </footer>
-    <script src="hn.js"></script>
     <script>
         function filterNews(category) {
             var rows = document.querySelectorAll('.news-row');
             rows.forEach(function(row) {
                 if (category === 'all' || row.getAttribute('data-category') === category) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function searchNews() {
+            var input, filter, rows, title, i, txtValue;
+            input = document.getElementById('search');
+            filter = input.value.toLowerCase();
+            rows = document.querySelectorAll('.news-row');
+
+            rows.forEach(function(row) {
+                title = row.querySelector('.title-cell').textContent || row.querySelector('.title-cell').innerText;
+                if (title.toLowerCase().indexOf(filter) > -1) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
