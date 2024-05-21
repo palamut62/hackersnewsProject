@@ -10,7 +10,7 @@ from django.db.models import Count
 
 
 def index(request):
-    news = News.objects.all().annotate(average_rating=Avg('ratings__rating'))
+    news = News.objects.all().annotate(average_rating=Avg('ratings__rating')).order_by('-date')
     categories = News.objects.values('category').annotate(count=Count('category')).order_by('-count')
 
     for new in news:

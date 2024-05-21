@@ -8,7 +8,6 @@
             display: flex;
             justify-content: left;
             margin: 5px 5px 5px 55px;
-
         }
 
         .category-item {
@@ -22,6 +21,22 @@
 
         .category-item:hover {
             background-color: #e0e0e0;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: center; /* Ortalamak için */
+            align-items: center;
+            padding: 5px;
+        }
+
+        .logo-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .hnname {
+            margin-left: 10px;
         }
 
         .edit-icon {
@@ -141,8 +156,7 @@
         <table id="hnmain" class="main-table">
             <tr>
                 <td class="header-cell">
-                    <div class="header-container"
-                         style="display: flex; justify-content: space-between; align-items: center; padding: 5px;">
+                    <div class="header-container">
                         <div class="logo-links">
                             <a href="{% url 'index' %}">
                                 <img src="{% static 'img/icon.png' %}" alt="Hacker News Logo">
@@ -151,7 +165,7 @@
                                 <b class="hnname"><a href="{% url 'index' %}">Ai-News</a></b>
                             </span>
                         </div>
-                        <div class="search-login">
+                        <div class="search-login" style="margin-left: auto;">
                             <form method="get" action="search" style="display: inline;">
                                 <input type="text" id="search" name="q" value="" size="17" autocorrect="off"
                                        spellcheck="false"
