@@ -52,6 +52,52 @@
                 opacity: 1;
             }
         }
+
+        /* Tablonun hücrelerine genişlik ve hizalama stilleri ekleyin */
+        .rank-cell, .vote-cell, .title-cell, .subtext-cell {
+            padding: 0;
+            margin: 0;
+            vertical-align: center;
+        }
+
+        /* Haber sıralama numaralarını ve oy verme hücrelerini daraltın */
+        .rank-cell {
+            width: 1%;
+            text-align: right;
+        
+        }
+
+        .vote-cell {
+            width: 1%;
+            text-align: center;
+        }
+
+        /* Haber başlıkları ve detayları için hücre genişliklerini ayarlayın */
+        .title-cell {
+            width: 60%;
+        }
+
+        .subtext-cell {
+            width: 20%;
+            text-align: left;
+        }
+
+        /* Tüm tablonun kenar boşluklarını kaldırın */
+        table.news-item {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .news-item td {
+            border: none;
+            padding: 3px 5px;
+        }
+
+        .news-row {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+
     </style>
 {% endblock %}
 {% block content %}
