@@ -6,17 +6,18 @@
     <style>
         .category-list {
             display: flex;
-            justify-content: center;
-            margin: 20px 0;
+            justify-content: left;
+            margin: 5px 5px 5px 55px;
+
         }
 
         .category-item {
-            margin: 0 10px;
+            margin: 0 5px;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 5px 5px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            background-color: #f5f5f5;
+            font-size: 12px;
         }
 
         .category-item:hover {
@@ -116,6 +117,23 @@
         .news-row {
             border-bottom: 1px solid #e0e0e0;
         }
+
+        #search {
+            font-family: Inconsolata, monospace; /* Yazı tipi */
+            width: 150px; /* Genişlik */
+            padding: 5px; /* İç boşluk */
+            border: 1px solid #ccc; /* Kenarlık */
+            border-radius: 5px; /* Kenar yuvarlama */
+            font-size: 14px; /* Yazı tipi boyutu */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Gölge */
+            outline: none; /* Tıklanınca mavi kenarlığı kaldırma */
+        }
+
+        #search:focus {
+            border-color: #007BFF; /* Tıklanınca kenarlık rengi */
+            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.25); /* Tıklanınca gölge rengi */
+        }
+
     </style>
 {% endblock %}
 {% block content %}
@@ -135,8 +153,10 @@
                         </div>
                         <div class="search-login">
                             <form method="get" action="search" style="display: inline;">
-                                <input type="text" id="search" name="q" value="" size="17" autocorrect="off" spellcheck="false"
-                                       autocapitalize="off" autocomplete="off" placeholder="Search" onkeyup="searchNews()">
+                                <input type="text" id="search" name="q" value="" size="17" autocorrect="off"
+                                       spellcheck="false"
+                                       autocapitalize="off" autocomplete="off" placeholder="Search"
+                                       onkeyup="searchNews()">
                             </form>
                             {% if user.is_authenticated %}
                                 <a href="{% url 'profile' %}"
@@ -185,7 +205,8 @@
                                 </td>
                                 <td class="title-cell">
                                     <a href="{{ new.link }}" target="_blank">{{ new.short_description }}</a>
-                                    <span class="sitebit comhead">(<a href="{{ new.link }}">{{ new.category }}</a>)</span>
+                                    <span class="sitebit comhead">(<a
+                                            href="{{ new.link }}">{{ new.category }}</a>)</span>
                                 </td>
                             </tr>
                             <tr>
@@ -270,7 +291,7 @@
     <script>
         function filterNews(category) {
             var rows = document.querySelectorAll('.news-row');
-            rows.forEach(function(row) {
+            rows.forEach(function (row) {
                 if (category === 'all' || row.getAttribute('data-category') === category) {
                     row.style.display = '';
                 } else {
@@ -285,7 +306,7 @@
             filter = input.value.toLowerCase();
             rows = document.querySelectorAll('.news-row');
 
-            rows.forEach(function(row) {
+            rows.forEach(function (row) {
                 title = row.querySelector('.title-cell').textContent || row.querySelector('.title-cell').innerText;
                 if (title.toLowerCase().indexOf(filter) > -1) {
                     row.style.display = '';
