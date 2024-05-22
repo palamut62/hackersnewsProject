@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.core import serializers
@@ -18,12 +19,14 @@ def index(request):
         new.user_liked = new.likes.filter(user=request.user).exists() if request.user.is_authenticated else False
     return render(request, 'home.html', {'news': news, 'categories': categories})
 
-
+@login_required
 def add_news(request):
     if request.method == 'POST':
         form = NewsForm(request.POST)
         if form.is_valid():
-            form.save()
+            news = form.save(commit=False)
+            news.user = request.user
+            news.save()
             return redirect('index')
     else:
         form = NewsForm()

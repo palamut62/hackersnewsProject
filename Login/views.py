@@ -67,7 +67,7 @@ class profile_view(View):
         return render(request, 'Login/profile.html', {'form': form})
 
 
-from django.contrib.auth.forms import PasswordChangeForm
+
 
 from .forms import CustomPasswordChangeForm
 

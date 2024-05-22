@@ -42,14 +42,14 @@
         .edit-icon {
             font-size: 12px;
             color: #9a9595;
-           
+
         }
 
         .fas.fa-star, .fas.fa-comment, .fas.fa-heart {
             color: #9a9595;
             font-size: 14px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Gölgeler eklendi */
-            
+
         }
 
         .liked {
@@ -179,8 +179,9 @@
                                    style="border: 1px solid black;margin-right: 5px;margin-left: 5px;border-radius: 5px">
                                     <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
                                 </a>
-                                {% if user.is_superuser %}
-                                    <a href="{% url 'add_news' %}">Add News</a>
+                                {% if user.is_authenticated %}
+                                   
+                                    <a href="{% url 'add_news' %}"><i class="fas fa-pencil-alt"></i> Write</a>
                                 {% endif %}
                                 <a href="{% url 'logout' %}">logout</a>
                             {% else %}
@@ -220,6 +221,7 @@
                                     </a></center>
                                 </td>
                                 <td class="title-cell">
+
                                     <a href="{{ new.link }}" target="_blank">{{ new.short_description }}</a>
                                     <span class="sitebit comhead">(<a
                                             href="{{ new.link }}">{{ new.category }}</a>)</span>
@@ -243,7 +245,7 @@
                                         {{ new.average_rating|floatformat:1|default:0 }}
                                     </span>
                                     |
-                                    by {{ user }}
+                                    by {{ new.user }} |
                                     <span class="age">{{ new.time_ago }}</span> |
                                     {% if user.is_authenticated %}
                                         <a href="{% url 'comment_view' new.id %}">
@@ -277,9 +279,34 @@
                                     {% endif %}
                                 </td>
                             </tr>
+
                         </table>
                     </td>
                 </tr>
+
+            {% empty %}
+                <tr class="news-row" data-category="{{ new.category }}">
+                    <td>
+                        <table class="news-item">
+                            <tr class="athing" id="news_{{ new.id }}">
+                                <td class="rank-cell">{{ forloop.counter }}.</td>
+                                <td class="vote-cell">
+                                    <center><a id="up_{{ new.id }}" href="vote?id={{ new.id }}&how=up&goto=news">
+                                        <div class="votearrow" title="upvote"></div>
+                                    </a></center>
+                                </td>
+                                <td class="title-cell">
+
+                                    <a href="" target="_blank">No record in the database</a>
+                                    <span class="sitebit comhead"></span>
+                                </td>
+                            </tr>
+
+
+                        </table>
+                    </td>
+                </tr>
+
             {% endfor %}
             </tbody>
             <tr>

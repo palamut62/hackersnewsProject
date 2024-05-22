@@ -11,6 +11,7 @@ CATEGORY = ['Ai', 'Tech', 'Python', 'Java', 'C++', 'C#', 'Ruby', 'JavaScript', '
             'Robotics', 'ComputerVision', 'CryptoCurrency', 'Blockchain', 'Bitcoin', 'Ethereum', 'Ripple', 'Litecoin']
 
 class News(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=200)
     short_description = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
