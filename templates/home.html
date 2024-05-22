@@ -180,7 +180,7 @@
                                     <p style="display: inline;font-size: 16px;margin-left: 5px">{{ user.username|capfirst }}</p>
                                 </a>
                                 {% if user.is_authenticated %}
-                                   
+
                                     <a href="{% url 'add_news' %}"><i class="fas fa-pencil-alt"></i> Write</a>
                                 {% endif %}
                                 <a href="{% url 'logout' %}">logout</a>
