@@ -60,7 +60,7 @@ Katkıda bulunmak için:
 5. Bir Pull Request açın
 
 ## Lisans
-Bu proje MIT Lisansı ile lisanslanmıştır. Daha fazla bilgi için `LICENSE` dosyasına bakabilirsiniz.
+----------------------------------
 
 ## İletişim
 Herhangi bir soru veya geri bildirim için lütfen [umutcelik6230@gmail.com](mailto:umutcelik6230@gmail.com) adresinden iletişime geçin.
