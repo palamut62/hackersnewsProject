@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
@@ -97,5 +98,8 @@ def search_news(request):
 
 def delete_comment(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
-    comment.delete()
+    if request.user == comment.user:
+        comment.delete()
+    else:
+        messages.error(request, 'You are not authorized to delete this comment.')
     return redirect('comment_view', comment.news.id)

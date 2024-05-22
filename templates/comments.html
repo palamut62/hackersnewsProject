@@ -1,10 +1,10 @@
 <style>
-    
+
     .modal-content {
-        position: fixed;  /* Modalın pozisyonunu sabitler */
-        top: 50%;  /* Modalı sayfanın ortasına yerleştirir */
-        left: 50%;  /* Modalı sayfanın ortasına yerleştirir */
-        transform: translate(-50%, -50%);  /* Modalın tam olarak sayfanın ortasında olmasını sağlar */
+        position: fixed; /* Modalın pozisyonunu sabitler */
+        top: 50%; /* Modalı sayfanın ortasına yerleştirir */
+        left: 50%; /* Modalı sayfanın ortasına yerleştirir */
+        transform: translate(-50%, -50%); /* Modalın tam olarak sayfanın ortasında olmasını sağlar */
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -36,7 +36,7 @@
     }
 
     .close {
-         position: absolute; /* Çarpı işaretinin pozisyonunu sabitler */
+        position: absolute; /* Çarpı işaretinin pozisyonunu sabitler */
         right: 10px; /* Çarpı işaretini sağa hizalar */
         top: 5px; /* Çarpı işaretini yukarı hizalar */
         color: #aaa;
@@ -61,25 +61,32 @@
 </style>
 <div id="commentModal" class="modal">
     <div class="modal-content">
-        <a href="{% url 'index' %}">
-             <span class="close">x</span>
+        <a href="{% url 'index' %}" style="margin-bottom: 10px">
+            <span class="close">x</span>
         </a>
-           
-            <ul id="commentList">
-                {% for comment in comments %}
-                    <li>{{ comment.comment }}-<a href="{% url 'delete_comment' comment.id %}" class="delete-icon"
-                                                 title="Delete Item">
+
+
+        <form id="commentForm" method="post">
+            {% csrf_token %}
+            <textarea name="comment" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+
+        <ul id="commentList">
+            {% for comment in comments %}
+                <li>
+                    <strong>{{ comment.user.username }}:</strong>  <!-- Yorum yapan kullanıcının adını gösterir -->
+                    <small>{{ comment.created_at }}</small>  <!-- Yorum zamanını gösterir -->
+                    <br>
+                    {{ comment.comment }}
+                    {% if request.user == comment.user %}
+                        -<a href="{% url 'delete_comment' comment.id %}" class="delete-icon" title="Delete Item">
                         &#128465; <!-- This is the HTML entity for a trash bin symbol -->
-                    </a></li>
-                {% endfor %}
-
-
-            </ul>
-            <form id="commentForm" method="post">
-                {% csrf_token %}
-                <textarea name="comment" required></textarea>
-                <button type="submit">Submit</button>
-            </form>
+                    </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 
